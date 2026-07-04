@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
+<title>Lingel — Contractor Invoice</title>
+<meta name="theme-color" content="#13161b">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lingel Invoice">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADYUlEQVR4nO3csWobSxiA0fUlYOM2kCZ1IM0tkuq+f5UqKdIE8h7G7lIIjEkcX+Nvd0bePacyAkuj4dM/i0B78fbd+wVe6p/ZC+B1ExCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiebPR8377+fn+708fvr7gGS6vrtdbzh7c3d7MXsIjLrb4afPDek6e2ZBonul8Ylr/CPuznr89+NDl1bV6nu98tmvlCfR0KH/OoTPZhddu4kCaeRGtnrVM3MmtLqKfJp3VnbZ0/CiaMIHUs53xezs6IPVsbfAODw1IPWOM3GffRO/TsIYEtFtjGhLQng1oSEA7t3VDAtq/TRsSEImADmG7ISSgo9ioIQGRCIhEQAeyxSkmIBIBHcvqQ0hAJAIiERCJgA5n3csgAZEIiERAJAIiERDJnF+mruvL94+zl3Au/vv3x+BXNIFIBESyhyPs3vgBfnJ/hk5fwHgmEImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERLKreyROv9/v9AWMZwKRCIhkV0fY9LvsTl/AeCYQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiCSXd1kc/ptmqcvYDwTiERAJHs4wmbdnZnFBCISEImADufu9mbFZxMQiYBIBEQioGNZ9wJoERCRgA5k9fGzCIhIQCQCOootzq9FQAexUT2LgIgEtH/bjZ9FQLu3aT2LgPZt63oWAe3YgHoWAe3VmHqWwQENe1cHN3KfR08gDW1t8A5POMI0tJ3xezvnZz2n93l5dT3l1Xdp1sdy5kW0UbSWiTt58fbd+3Wf8dvPz48+/unD1yf+yzR6gXP4BK4/gR4N5el6lmW5u705h+14Lc5nu9afQCcP59D/1vMoM+k3Z1LMb7YKiIPwTTSJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+QXmOYlu5F5+IQAAAABJRU5ErkJggg==">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Archivo+Narrow:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#13161b;--panel:#1a1e25;--panel-2:#222732;--text:#e8e4d9;--muted:#7c8694;--line:#2a2f3a;--hivis:#e2f14d;--ok:#4ade80;--warn:#fbbf24;--danger:#ef4444;--r:12px;--rs:8px}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:'Spline Sans',sans-serif;color:var(--text)}
+.wrap{max-width:860px;margin:0 auto;padding:14px}
+input,select,textarea{font-family:'Spline Sans',sans-serif;border:1px solid var(--line);border-radius:var(--rs);padding:9px 11px;font-size:14px;background:var(--panel);color:var(--text);width:100%}
+input:focus,select:focus{outline:2px solid var(--hivis);outline-offset:-1px}
+input::placeholder,textarea::placeholder{color:var(--muted)}
+
+
+
+
+.cname-bar{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;margin-bottom:12px;text-align:center}
+.cname-bar .cn{font-family:Archivo;font-weight:900;font-size:20px;color:var(--text);text-transform:uppercase}
+.cname-bar .csub{font-family:'Archivo Narrow';font-size:13px;color:var(--muted);margin-top:4px;letter-spacing:.08em;text-transform:uppercase}
+.sec{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--hivis);border-radius:var(--r);padding:16px 18px;margin-bottom:12px}
+.slbl{font-family:Archivo;font-weight:700;font-size:12px;color:var(--hivis);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.gr{display:grid;grid-template-columns:1fr 1fr;gap:10px}.g3{grid-template-columns:1fr 1fr 1fr}.g4{grid-template-columns:1fr 1fr 1fr 1fr}
+.fd{display:flex;flex-direction:column;gap:4px}.s2{grid-column:span 2}
+.lbl{font-family:'JetBrains Mono';font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.btn{border:none;border-radius:var(--rs);padding:10px 18px;font-family:'Archivo Narrow';font-size:13px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.04em}
+.btn-p{background:var(--hivis);color:#111}.btn-s{background:transparent;border:1px solid var(--line);color:var(--text)}
+.btn-d{background:transparent;border:1px solid var(--danger);color:var(--danger)}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.qitem{display:flex;gap:8px;align-items:center;padding:8px 10px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--rs);margin-bottom:6px;font-size:13px;flex-wrap:wrap}
+.qitem .qref{font-family:'JetBrains Mono';font-size:11px;color:var(--hivis);white-space:nowrap}
+.qitem .qsz{color:var(--muted);font-size:12px}.qitem .qsf{font-weight:700;color:var(--ok)}
+.qitem .rm{background:transparent;border:none;color:var(--danger);font-size:14px;cursor:pointer;padding:2px 6px;margin-left:auto}
+
+.arow{display:grid;grid-template-columns:2fr 1fr 1fr 1fr auto;gap:8px;align-items:center;padding:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--rs);margin-bottom:6px;font-size:13px}
+.arow input,.arow select{font-size:13px;padding:7px 8px}
+.arow .tot{font-family:'JetBrains Mono';font-weight:700;color:var(--ok);font-size:13px;text-align:right}
+.arow .rm{background:transparent;border:none;color:var(--danger);font-size:16px;cursor:pointer;padding:4px}
+.sbox{background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:14px 18px;margin-top:12px}
+.sr{display:flex;justify-content:space-between;padding:5px 0;font-size:13px;color:var(--muted)}.sr b{color:var(--text)}
+.sr.big{font-size:17px;color:var(--hivis);font-weight:700;border-top:1px solid var(--line);padding-top:10px;margin-top:6px}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);background:#13161b;color:#fff;border:1px solid var(--line);border-left:4px solid var(--hivis);padding:11px 18px;border-radius:9px;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:90}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.rcard{font-size:12px;color:var(--muted);line-height:1.7;padding:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--rs);margin-top:10px}
+.rcard b{color:var(--text)}
+/* ---- login gate ---- */
+.gate{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--hivis);border-radius:var(--r);padding:26px 24px}
+.gate-card .brand{font-family:Archivo;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:.04em}
+.gate-card .sub{font-family:'Archivo Narrow';font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:4px 0 22px}
+.gate-card .fd{margin-bottom:14px}
+.gate-err{color:var(--danger);font-size:12px;min-height:16px;margin-bottom:6px}
+/* ---- top bar (logged-in) ---- */
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:9px 14px;margin-bottom:12px}
+.topbar .who{font-size:13px;color:var(--muted)}
+.topbar .who b{color:var(--hivis);font-family:Archivo;font-weight:700}
+.topbar .lo{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:var(--rs);padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Archivo Narrow';text-transform:uppercase;letter-spacing:.04em}
+.pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono'}
+.pill.on{background:rgba(74,222,128,.12);color:var(--ok);border:1px solid rgba(74,222,128,.3)}
+.pill.off{background:rgba(124,134,148,.12);color:var(--muted);border:1px solid var(--line)}
+@media(max-width:600px){.gr,.g3,.g4{grid-template-columns:1fr}.s2{grid-column:span 1}.row,.arow{grid-template-columns:1fr 1fr;gap:6px}}
+@media print{.acts,.toast,.rcard,.topbar{display:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ===== LOGIN GATE ===== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="brand">Lingel</div>
+    <div class="sub">Contractor Invoice · Login</div>
+    <div class="fd">
+      <div class="lbl">Contractor</div>
+      <select id="loginName"><option value="">— Select your name —</option></select>
+      <div id="rosterStatus" style="font-size:11px;color:var(--muted);margin-top:6px">Loading contractor list… <a href="#" onclick="fetchRoster();return false" style="color:var(--hivis);text-decoration:none">↻ Reload</a></div>
+    </div>
+    <div class="fd">
+      <div class="lbl">PIN</div>
+      <input type="password" id="loginPin" placeholder="4-digit PIN" inputmode="numeric" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="gate-err" id="loginErr"></div>
+    <button class="btn btn-p" style="width:100%" onclick="doLogin()">Log in</button>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+
+<div class="topbar">
+  <div class="who">Logged in as <b id="whoName">—</b> <span class="pill off" id="netPill">Sheet: —</span></div>
+  <button class="lo" onclick="doLogout()">Log out</button>
+</div>
+
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+  <div style="font-family:Archivo;font-weight:900;font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.1em">Contractor Invoice</div>
+  <div style="text-align:right">
+    <div class="lbl">Invoice no.</div>
+    <div style="font-family:Archivo;font-size:18px;font-weight:900;color:#1a1a1a" id="invLabel">—</div>
+  </div>
+</div>
+
+<div class="cname-bar">
+  <div class="cn" id="cnameDisplay">Contractor Name</div>
+  <div class="csub">UPVC & Aluminium Window & Door Installation</div>
+</div>
+
+<div class="sec">
+  <div class="slbl">Invoice details</div>
+  <div class="gr g3">
+    <div class="fd"><div class="lbl">Invoice no.</div><input id="invNo" placeholder="Auto-generated"></div>
+    <div class="fd"><div class="lbl">Date</div><input type="date" id="invDate"></div>
+    <div class="fd"><div class="lbl">Bill to</div>
+      <select id="billTo" onchange="updateBillTo()">
+        <option value="">— Select —</option>
+        <option value="lingel">Lingel Windows & Doors Technology Pvt. Ltd</option>
+        <option value="fensterbau">Fensterbau Lingel India Private Limited</option>
+      </select></div>
+  </div>
+  <div class="gr" style="margin-top:10px">
+    <div class="fd"><div class="lbl">Offer no. (from quotation)</div><input id="offerNo" placeholder="Auto-filled from quotation"></div>
+    <div class="fd"><div class="lbl">Customer name (from quotation)</div><input id="custName" placeholder="Auto-filled from quotation"></div>
+  </div>
+  <div class="gr" style="margin-top:10px">
+    <div class="fd"><div class="lbl">Contractor name</div><input id="cName" placeholder="Full name" readonly style="background:var(--panel-2);cursor:not-allowed" oninput="document.getElementById('cnameDisplay').textContent=this.value||'Contractor Name'"></div>
+    <div class="fd"><div class="lbl">Contractor phone</div><input type="tel" id="cPhone" placeholder="+91 XXXXX XXXXX"></div>
+    <div class="fd s2"><div class="lbl">Contractor address</div><input id="cAddr" placeholder="Full address"></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="slbl">Import quotation(s) — auto sq.ft</div>
+  <div style="font-size:12px;color:var(--muted);margin-bottom:10px">Upload Lingel quotation PDFs — positions & sq.ft auto-calculated from dimensions. Multiple PDFs supported (e.g. 78416/5 + 78416/6).</div>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <button class="btn btn-s" onclick="document.getElementById('qPdf').click()">📄 Upload quotation(s)</button>
+    <button class="btn btn-s" onclick="addQItem()">+ Add manually</button>
+    <button class="btn btn-p" onclick="applyAll()">✓ Apply all to invoice</button>
+    <input type="file" id="qPdf" accept="application/pdf,.pdf" multiple hidden>
+  </div>
+  <div id="qList" style="margin-top:10px"></div>
+  <div id="qSummary" style="font-size:13px;color:var(--ok);margin-top:8px"></div>
+</div>
+
+<div class="sec">
+  <div class="slbl">Installation</div>
+  <div class="gr g3">
+    <div class="fd"><div class="lbl">Total sq.ft (from quotation)</div><input type="number" id="totalSqft" step="0.01" placeholder="Auto-calculated" oninput="calc()"></div>
+    <div class="fd"><div class="lbl">Rate ₹ / sq.ft</div><input type="number" id="rate" step="0.01" placeholder="Fill after installation" oninput="calc()"></div>
+    <div class="fd"><div class="lbl">Installation total</div><div style="font-family:'JetBrains Mono';font-size:18px;font-weight:700;color:var(--hivis);padding:9px 0" id="instTotal">₹0</div></div>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="slbl">Additional charges</div>
+  <div id="charges"></div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">
+    <button class="btn btn-s" onclick="addCharge('Shifting',800)">+ Shifting</button>
+    <button class="btn btn-s" onclick="addCharge('Unloading',800)">+ Unloading</button>
+    <button class="btn btn-s" onclick="addCharge('Masking Tape',100)">+ Masking Tape</button>
+    <button class="btn btn-s" onclick="addCharge('Pleated Mesh',0)">+ Pleated Mesh</button>
+    <button class="btn btn-s" onclick="addCharge('Georgian Bars',0)">+ Georgian Bars</button>
+    <button class="btn btn-s" onclick="addCharge('Other',0)">+ Other</button>
+  </div>
+</div>
+
+<div class="sbox">
+  <div class="sr"><span>Installation subtotal</span><b id="sub">₹0</b></div>
+  <div class="sr"><span>Total sq.ft</span><b id="tsf">0</b></div>
+  <div class="sr"><span>Avg rate / sq.ft</span><b id="avgr">₹0</b></div>
+  <div class="sr"><span>Additional charges</span><b id="ach">₹0</b></div>
+  <div class="sr big"><span>Grand total</span><b id="grand">₹0</b></div>
+</div>
+
+<div class="sec">
+  <div class="slbl">Handover document</div>
+  <div style="display:flex;gap:8px;align-items:center">
+    <button class="btn btn-s" onclick="document.getElementById('hoFile').click()">📄 Upload handover</button>
+    <input type="file" id="hoFile" accept=".pdf,image/*" hidden onchange="handleHO(this)">
+    <span id="hoSt" style="font-size:12px;color:var(--muted)">Not uploaded</span>
+  </div>
+</div>
+
+<div class="sec">
+  <div class="slbl">Notes</div>
+  <textarea id="notes" rows="3" placeholder="Payment terms, bank details…" style="resize:vertical"></textarea>
+</div>
+
+<div class="rcard">
+  <b>Rate card:</b> ALU ₹45/sqft · UPVC ₹25/sqft · Skylight ₹55 · Glass House ₹60 · Dismantling ₹35 · Outstation ₹60<br>
+  <b>Charges:</b> Unloading ₹800 · Shifting ₹800 · Tape ₹100/pc · Chain Pulley ₹2000 · Crane actual · H&F ₹1500/team/day<br>
+  <b>Penalties:</b> No-show -₹5/sqft · Bad silicon -₹10/sqft · Glass damage 50%
+</div>
+
+<div class="acts">
+  <button class="btn btn-p" onclick="downloadPDF()">⤓ Download PDF</button>
+  <button class="btn btn-s" onclick="exportExcel()">⤓ My invoices (Excel)</button>
+  <button class="btn btn-s" onclick="emailInvoice()">📧 Email to Vishal</button>
+  <button class="btn btn-s" onclick="window.print()">🖨 Print</button>
+  <button class="btn btn-p" onclick="newInvoice()" style="margin-left:auto">＋ New invoice</button>
+</div>
+
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const LOGO="";
+
+/* ============================================================
+   CONFIG — edit these two things before sharing the file
+   ============================================================ */
+// 1) Paste your Google Apps Script Web-App URL here (see setup notes).
+//    Leave "" to run fully offline (invoices still work; nothing is logged).
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwC8ZPk7oaU2wNdHabrbWfc2DufOUvj10dyefQMUdQ8ivaWMYrcWrA59iudooV9yLym0Q/exec";
+
+// 2) OFFLINE FALLBACK list only. The LIVE list of who can log in now lives
+//    in the "Contractors" tab of your Google Sheet (columns: Name, Code, PIN,
+//    Phone, Address). Add / remove people there — no need to edit this file.
+//    This list is used only on a brand-new device before the Sheet is reached,
+//    or if the Sheet is unreachable.
+const CONTRACTORS = [
+  { name:"Ravi Kumar",   code:"RK", pin:"1234", phone:"", addr:"" },
+  { name:"Suresh Yadav", code:"SY", pin:"2345", phone:"", addr:"" },
+  { name:"Amit Sharma",  code:"AS", pin:"3456", phone:"", addr:"" },
+];
+/* ============================================================ */
+
+document.getElementById('invDate').valueAsDate=new Date();
+
+let currentUser=null, curCode='', curSeq=1;
+// live roster: cached copy from the Sheet if we have one, else the in-file fallback
+let ROSTER = (JSON.parse(localStorage.getItem('linv_roster')||'null')) || CONTRACTORS.slice();
+
+function makeInvNo(code,seq){return 'INV-'+code+'-'+String(seq).padStart(3,'0');}
+function setInvNo(str){document.getElementById('invNo').value=str;document.getElementById('invLabel').textContent=str;}
+document.getElementById('invNo').oninput=function(){document.getElementById('invLabel').textContent=this.value;};
+
+/* ---- JSONP helper (lets us read a value back from the Sheet cross-origin) ---- */
+function jsonp(url){return new Promise((res,rej)=>{
+  const cb='cb_'+Date.now()+Math.floor(Math.random()*1e5);
+  const s=document.createElement('script');
+  const to=setTimeout(()=>{cleanup();rej(new Error('timeout'));},15000);
+  function cleanup(){clearTimeout(to);delete window[cb];s.remove();}
+  window[cb]=d=>{cleanup();res(d);};
+  s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;
+  s.onerror=()=>{cleanup();rej(new Error('network'));};
+  document.head.appendChild(s);
+});}
+
+/* ---- read from the Sheet: try a normal fetch first (best on mobile),
+        fall back to JSONP script-injection. Cache-busted every call. ---- */
+async function apiGet(params){
+  const url=SHEET_WEBAPP_URL+(SHEET_WEBAPP_URL.includes('?')?'&':'?')+params+'&t='+Date.now();
+  try{
+    const res=await fetch(url,{method:'GET',redirect:'follow',cache:'no-store'});
+    if(res.ok){const data=await res.json();if(data&&typeof data==='object')return data;}
+  }catch(e){/* fall through to JSONP */}
+  return await jsonp(url);
+}
+
+/* ---- next invoice number: the Sheet is the boss; local memory only offline ---- */
+async function nextSeq(code){
+  if(SHEET_WEBAPP_URL){
+    try{
+      const r=await apiGet('action=next&contractor='+encodeURIComponent(code));
+      if(r&&typeof r.next==='number'){
+        setNet(true);
+        // keep this device's offline counter in step with the Sheet
+        localStorage.setItem('linv_seq_'+code,String(r.next-1));
+        return r.next;
+      }
+    }catch(e){setNet(false);}
+  }
+  // no Sheet / offline: fall back to what this device remembers
+  return parseInt(localStorage.getItem('linv_seq_'+code)||'0',10)+1;
+}
+async function refreshInvoiceNumber(){
+  curSeq=await nextSeq(curCode);
+  setInvNo(makeInvNo(curCode,curSeq));
+}
+function setNet(ok){
+  const p=document.getElementById('netPill');if(!p)return;
+  if(!SHEET_WEBAPP_URL){p.className='pill off';p.textContent='Sheet: not set';return;}
+  p.className='pill '+(ok?'on':'off');p.textContent='Sheet: '+(ok?'connected':'offline');
+}
+
+/* ---- log a finished invoice to the Google Sheet (fire-and-forget) ---- */
+function logToSheet(){
+  if(!SHEET_WEBAPP_URL) return;
+  const sqft=parseFloat(g('totalSqft'))||0, rate=parseFloat(g('rate'))||0;
+  let ach=0;document.querySelectorAll('[data-cq]').forEach(el=>{const q=parseFloat(el.value)||0,r=parseFloat(el.closest('.arow').querySelector('[data-cr]').value)||0;ach+=q*r;});
+  const inst=sqft*rate;
+  const payload={
+    action:'log',
+    timestamp:new Date().toISOString(),
+    contractor:g('cName'), code:curCode,
+    invoiceNo:g('invNo'), date:g('invDate'),
+    billTo:(CO[g('billTo')]||{}).n||'',
+    offerNo:g('offerNo'), customer:g('custName'),
+    totalSqft:sqft, rate:rate,
+    installation:inst, additional:ach, grandTotal:inst+ach,
+    notes:g('notes')
+  };
+  // text/plain avoids a CORS pre-flight; no-cors = we don't need to read the reply
+  fetch(SHEET_WEBAPP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).catch(()=>{});
+  localStorage.setItem('linv_seq_'+curCode,String(curSeq)); // keep local counter in step
+}
+
+/* ---- login (roster comes from the Sheet, cached for offline) ---- */
+function populateLoginNames(){
+  const sel=document.getElementById('loginName');
+  sel.innerHTML='<option value="">— Select your name —</option>';
+  ROSTER.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.name;sel.appendChild(o);});
+}
+function setRosterStatus(msg,color){const el=document.getElementById('rosterStatus');if(el)el.innerHTML=msg+' <a href="#" onclick="fetchRoster();return false" style="color:'+(color||'var(--hivis)')+';text-decoration:none">↻ Reload</a>';}
+async function fetchRoster(){
+  if(!SHEET_WEBAPP_URL){setRosterStatus('Not connected to a Sheet — using offline list.');return;}
+  setRosterStatus('Loading contractor list…');
+  for(let attempt=1;attempt<=2;attempt++){
+    try{
+      const r=await apiGet('action=contractors');
+      if(r&&Array.isArray(r.contractors)){
+        if(r.contractors.length){
+          ROSTER=r.contractors;
+          localStorage.setItem('linv_roster',JSON.stringify(ROSTER));
+          populateLoginNames();setNet(true);
+          setRosterStatus('✓ '+ROSTER.length+' contractor'+(ROSTER.length>1?'s':'')+' loaded','var(--ok)');
+        }else{
+          setNet(true);
+          setRosterStatus('No names found in the Contractors tab.','var(--danger)');
+        }
+        return;
+      }
+    }catch(e){/* try again */}
+  }
+  setNet(false);
+  setRosterStatus('Couldn’t load — check internet, then','var(--danger)');
+}
+function doLogin(){
+  const idx=document.getElementById('loginName').value;
+  const pin=document.getElementById('loginPin').value.trim();
+  const err=document.getElementById('loginErr');
+  if(idx===''){err.textContent='Please select your name.';return;}
+  const c=ROSTER[+idx];
+  if(!c){err.textContent='Please pick your name again.';return;}
+  if(pin!==String(c.pin)){err.textContent='Wrong PIN. Try again.';return;}
+  err.textContent='';
+  localStorage.setItem('linv_user',c.code);
+  applyUser(c);
+}
+function doLogout(){localStorage.removeItem('linv_user');location.reload();}
+async function applyUser(c){
+  currentUser=c;curCode=c.code;
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('whoName').textContent=c.name;
+  const nm=document.getElementById('cName');nm.value=c.name;document.getElementById('cnameDisplay').textContent=c.name;
+  if(c.phone&&!document.getElementById('cPhone').value)document.getElementById('cPhone').value=c.phone;
+  if(c.addr&&!document.getElementById('cAddr').value)document.getElementById('cAddr').value=c.addr;
+  setNet(false);
+  await refreshInvoiceNumber();
+}
+
+/* ---- start a fresh invoice (new number, cleared form) ---- */
+async function newInvoice(){
+  if(!confirm('Start a new invoice? This clears the current one.'))return;
+  ['totalSqft','rate','offerNo','custName','notes','cPhone','cAddr'].forEach(id=>{const e=document.getElementById(id);if(e&&!['cPhone','cAddr'].includes(id))e.value='';});
+  document.getElementById('charges').innerHTML='';
+  document.getElementById('qList').innerHTML='';document.getElementById('qSummary').innerHTML='';
+  qItems=[];importedOffers=[];importedClient='';
+  document.getElementById('offerNo').dataset.auto='';document.getElementById('custName').dataset.auto='';
+  document.getElementById('invDate').valueAsDate=new Date();
+  calc();
+  await refreshInvoiceNumber();
+  toast('New invoice: '+g('invNo'));
+}
+
+/* ---- boot: restore session or show login, then refresh roster from Sheet ---- */
+populateLoginNames();
+(function boot(){
+  const savedCode=localStorage.getItem('linv_user');
+  const c=savedCode?ROSTER.find(x=>x.code===savedCode):null;
+  if(c){applyUser(c);}
+  else{document.getElementById('gate').style.display='flex';}
+  fetchRoster(); // pull the latest names/PINs from the Sheet in the background
+})();
+
+const CO={lingel:{n:'Lingel Windows & Doors Technology Pvt. Ltd',a:'Kapriwas Sec-14, Kapriwas, Haryana 123110'},fensterbau:{n:'Fensterbau Lingel India Private Limited',a:'1st floor, 12A & 22, near Subhash chowk, Central Park II, Sector 48, Gurugram, Haryana 122018'}};
+const RATES={'Aluminium Windows & Doors':45,'UPVC Windows & Doors':25,'Skylight':55,'Glass House':60,'Georgian Bars':15,'Dismantling Old Windows':35,'Outstation (beyond 200km)':60};
+const SVC=Object.keys(RATES);
+
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800);}
+function fmt$(n){return '₹'+n.toLocaleString('en-IN',{maximumFractionDigits:2});}
+function updateBillTo(){const c=CO[document.getElementById('billTo').value];document.getElementById('billTo').nextElementSibling&&0;}
+function normNum(v){if(v==null)return null;const n=parseFloat(String(v).replace(/\./g,'').replace(',','.'));return isFinite(n)?n:null;}
+function mmToSqft(w,h){return (w*h)/(304.8*304.8);}
+
+/* ---- quotation import ---- */
+let qItems=[],importedOffers=[],importedClient="";
+function addQItem(ref,sf,w,h){qItems.push({id:Date.now()+Math.random(),ref:ref||'',sqft:sf||0,w:w||0,h:h||0});renderQ();}
+function renderQ(){
+  const el=document.getElementById('qList');
+  el.innerHTML=qItems.map((q,i)=>`<div class="qitem">
+    <span class="qref">${q.ref}</span>
+    <span class="qsz">${q.w?Math.round(q.w)+'×'+Math.round(q.h)+'mm':''}</span>
+    <input style="width:70px" type="number" step="0.01" value="${q.sqft?q.sqft.toFixed(2):''}" placeholder="Sqft" oninput="qItems[${i}].sqft=parseFloat(this.value)||0;renderQ()">
+    <span class="qsf">${q.sqft?q.sqft.toFixed(2)+' sqft':''}</span>
+    <button class="rm" onclick="qItems.splice(${i},1);renderQ()">✕</button>
+  </div>`).join('');
+  const total=qItems.reduce((s,q)=>s+q.sqft,0);
+  document.getElementById('qSummary').innerHTML=qItems.length?(qItems.length+' positions · '+total.toFixed(2)+' sq.ft total'+(importedOffers.length?'<br><span style="color:var(--muted)">Offers: <b style="color:var(--text)">'+combineOffers(importedOffers)+'</b>'+(importedClient?' · '+importedClient:'')+'</span>':'')):'';
+}
+
+function ensureScript(src){return new Promise((r,j)=>{if(document.querySelector('script[src="'+src+'"]'))return r();const s=document.createElement('script');s.src=src;s.onload=r;s.onerror=()=>j(new Error('load failed'));document.head.appendChild(s);});}
+async function ensurePdfjs(){
+  if(window.pdfjsLib)return;
+  const cdns=[['https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js','https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'],
+    ['https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js','https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js']];
+  for(const [lib,wk] of cdns){try{await ensureScript(lib);if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc=wk;return;}}catch(e){}}
+  throw new Error('PDF reader needs internet');}
+
+const RE_HDR=/^(\d{1,3}-.+?)\s+((?:[A-Za-z]\d?=[\d.,]+;){2,})\s+(\d+)/;
+document.getElementById('qPdf').addEventListener('change',async ev=>{
+  const files=[...ev.target.files];if(!files.length)return;ev.target.value='';
+  toast('📄 Reading '+files.length+' PDF'+(files.length>1?'s':'')+'…');
+  try{
+    await ensurePdfjs();let total=0;
+    for(const f of files){
+      const buf=await f.arrayBuffer();
+      const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+      for(let pn=1;pn<=pdf.numPages;pn++){
+        const page=await pdf.getPage(pn);const tc=await page.getTextContent();
+        const _sp=[];tc.items.forEach(it=>{if(!it.str)return;_sp.push({x:it.transform[4],y:it.transform[5],str:it.str});});
+        _sp.sort((a,b)=>b.y-a.y);
+        const _bk=[];for(const sp of _sp){let placed=false;for(const b of _bk){if(Math.abs(sp.y-b.y)<5){b.items.push(sp);placed=true;break;}}if(!placed)_bk.push({y:sp.y,items:[sp]});}
+        const lines=_bk.sort((a,b)=>b.y-a.y).map(b=>b.items.sort((a,c)=>a.x-c.x).map(o=>o.str).join(' ').replace(/\s+/g,' ').trim());
+        for(const ln of lines){
+          // capture offer no + client (multiple patterns for robustness)
+          const nr=ln.match(/(?:Nr|Offer|Quotation)[^0-9]*([0-9]{4,7}\/[0-9]{1,3})/i)||ln.match(/\b([0-9]{4,7}\/[0-9]{1,3})\b/);
+          if(nr&&!importedOffers.includes(nr[1])&&!/Tel|Fax|Phone|98|97|91/i.test(ln))importedOffers.push(nr[1]);
+          const cl=ln.match(/(Mr|Mrs|Ms|M\/s)\.?\s+\S.*/i);
+          if(cl&&!importedClient&&!/Sales|Manager|Sr\.|Vetrivel/i.test(ln))importedClient=ln.trim();
+          const m=RE_HDR.exec(ln);if(!m)continue;
+          const tk={};m[2].replace(/([A-Za-z]\d?)=([\d.,]+)/g,(_,a,b)=>{tk[a]=normNum(b);});
+          let W=null,H=null;
+          if(tk.B!=null&&tk.H!=null){W=tk.B;H=tk.H;}else if(tk.L!=null&&tk.A!=null){W=tk.L;H=tk.A;}
+          const sqft=(W&&H)?mmToSqft(W,H):0;
+          qItems.push({id:Date.now()+total,ref:m[1],sqft,w:W||0,h:H||0});total++;
+        }
+      }
+    }
+    renderQ();syncQuotationMeta();
+    toast(total?'✓ '+total+' positions · '+qItems.reduce((s,q)=>s+q.sqft,0).toFixed(1)+' sq.ft':'⚠ No positions found');
+  }catch(e){console.error(e);toast('⚠ '+(e.message||"Couldn't read PDF"));}
+});
+
+function applyAll(){
+  if(!qItems.length){toast('Import a quotation first');return;}
+  const total=qItems.reduce((s,q)=>s+q.sqft,0);
+  document.getElementById('totalSqft').value=total.toFixed(2);
+  calc();
+  toast('✓ '+total.toFixed(2)+' sq.ft applied');
+}
+
+/* ---- line items removed — single sqft+rate ---- */
+function _unused_addLine(desc,sqft){
+  const c=document.getElementById('lines');const id='l'+Date.now()+Math.random();
+  c.insertAdjacentHTML('beforeend',`<div class="row" id="${id}">
+    <select onchange="autoRate(this);calc()">${SVC.map(s=>`<option value="${s}"${desc&&desc===s?' selected':''}>${s} (₹${RATES[s]})</option>`).join('')}${desc&&!RATES[desc]?`<option selected>${desc}</option>`:''}</select>
+    <input type="number" step="0.01" placeholder="Sq.ft" value="${sqft?sqft.toFixed(2):''}" data-sf="${id}" oninput="calc()">
+    <input type="number" step="0.01" placeholder="Rate ₹" data-rt="${id}" oninput="calc()">
+    <div class="tot" data-tot="${id}">₹0</div>
+    <button class="rm" onclick="this.closest('.row').remove();calc()">✕</button>
+  </div>`);
+  autoRate(c.lastElementChild.querySelector('select'));calc();
+}
+function autoRate(sel){const r=RATES[sel.value];if(r){const row=sel.closest('.row');const rt=row.querySelector('[data-rt]');if(rt&&!rt.value)rt.value=r;}}
+
+/* ---- additional charges ---- */
+function addCharge(name,rate){
+  const c=document.getElementById('charges');const id='c'+Date.now()+Math.random();
+  c.insertAdjacentHTML('beforeend',`<div class="arow" id="${id}">
+    <input placeholder="Charge description" value="${name||''}" style="font-weight:600">
+    <input type="number" placeholder="Qty" value="1" min="1" data-cq="${id}" oninput="calc()">
+    <input type="number" step="0.01" placeholder="Rate ₹" value="${rate||''}" data-cr="${id}" oninput="calc()">
+    <div class="tot" data-ct="${id}">₹0</div>
+    <button class="rm" onclick="this.closest('.arow').remove();calc()">✕</button>
+  </div>`);calc();
+}
+
+function calc(){
+  const sqft=parseFloat(document.getElementById('totalSqft').value)||0;
+  const rate=parseFloat(document.getElementById('rate').value)||0;
+  const inst=sqft*rate;
+  document.getElementById('instTotal').textContent=fmt$(inst);
+  let ach=0;
+  document.querySelectorAll('[data-cq]').forEach(el=>{
+    const q=parseFloat(el.value)||0,r=parseFloat(el.closest('.arow').querySelector('[data-cr]').value)||0;
+    const t=q*r;ach+=t;
+    el.closest('.arow').querySelector('[data-ct]').textContent=fmt$(t);});
+  document.getElementById('sub').textContent=fmt$(inst);
+  document.getElementById('tsf').textContent=sqft.toFixed(2);
+  document.getElementById('avgr').textContent=rate?fmt$(rate):'₹0';
+  document.getElementById('ach').textContent=fmt$(ach);
+  document.getElementById('grand').textContent=fmt$(inst+ach);
+}
+
+/* ---- handover ---- */
+let hoFile=null;
+function handleHO(inp){const f=inp.files[0];if(!f)return;hoFile=f;document.getElementById('hoSt').innerHTML='<span style="color:var(--ok)">✓ '+f.name+'</span>';}
+
+/* ---- PDF ---- */
+function g(id){return document.getElementById(id)?.value||'';}
+function buildInvoiceHTML(){
+  const sqft=parseFloat(g('totalSqft'))||0;
+  const rate=parseFloat(g('rate'))||0;
+  const inst=sqft*rate;
+  let charges=[];let chTotal=0;
+  document.querySelectorAll('.arow').forEach(row=>{
+    const desc=row.querySelector('input')?.value||'';
+    const qty=parseFloat(row.querySelector('[data-cq]')?.value)||0;
+    const cr=parseFloat(row.querySelector('[data-cr]')?.value)||0;
+    const t=qty*cr;chTotal+=t;
+    if(desc)charges.push({desc,qty,rate:cr,total:t});
+  });
+  const grand=inst+chTotal;
+  const billTo=CO[g('billTo')];
+  const chargeRows=charges.map((c,i)=>`<tr><td style="padding:8px 12px;border-bottom:1px solid #eee">${i+1}</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${c.desc}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center">${c.qty}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right">₹${c.rate.toLocaleString('en-IN')}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600">₹${c.total.toLocaleString('en-IN')}</td></tr>`).join('');
+
+  return `<div style="font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;width:100%;padding:40px 45px;background:#fff">
+    <div style="text-align:center;margin-bottom:30px">
+      <div style="font-size:28px;font-weight:900;text-transform:uppercase;letter-spacing:2px">${g('cName')||'Contractor Name'}</div>
+      <div style="font-size:13px;color:#666;margin-top:4px;text-transform:uppercase;letter-spacing:1px">UPVC & Aluminium Window & Door Installation</div>
+      <div style="font-size:12px;color:#888;margin-top:6px">${g('cAddr')||''} ${g('cPhone')?'· '+g('cPhone'):''}</div>
+    </div>
+
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #1a1a1a">
+      <div>
+        <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bill To</div>
+        <div style="font-weight:700;font-size:14px">${billTo?billTo.n:'—'}</div>
+        <div style="font-size:12px;color:#555;max-width:280px;line-height:1.5">${billTo?billTo.a:''}</div>
+        ${g('custName')?`<div style="font-size:12px;color:#555;margin-top:8px"><span style="color:#888">Customer:</span> <b>${g('custName')}</b></div>`:''}
+        ${g('offerNo')?`<div style="font-size:12px;color:#555"><span style="color:#888">Offer No.:</span> <b>${g('offerNo')}</b></div>`:''}
+      </div>
+      <div style="text-align:right">
+        <div style="font-size:32px;font-weight:900;color:#1a1a1a;letter-spacing:1px">INVOICE</div>
+        <table style="margin-left:auto;font-size:12px;margin-top:8px">
+          <tr><td style="color:#888;text-align:right;padding:2px 10px">Invoice No.</td><td style="font-weight:700">${g('invNo')}</td></tr>
+          <tr><td style="color:#888;text-align:right;padding:2px 10px">Date</td><td style="font-weight:700">${g('invDate')}</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <table style="width:100%;border-collapse:collapse;margin-bottom:6px">
+      <thead>
+        <tr style="background:#1a1a1a;color:#fff">
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px">#</th>
+          <th style="padding:10px 12px;text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Description</th>
+          <th style="padding:10px 12px;text-align:center;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Sq.ft</th>
+          <th style="padding:10px 12px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Rate</th>
+          <th style="padding:10px 12px;text-align:right;font-size:11px;text-transform:uppercase;letter-spacing:.5px">Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:#f8f9fa">
+          <td style="padding:12px;border-bottom:1px solid #ddd">1</td>
+          <td style="padding:12px;border-bottom:1px solid #ddd;font-weight:600">Window & Door Installation</td>
+          <td style="padding:12px;border-bottom:1px solid #ddd;text-align:center;font-weight:700">${sqft.toFixed(2)}</td>
+          <td style="padding:12px;border-bottom:1px solid #ddd;text-align:right">₹${rate.toLocaleString('en-IN')}/sqft</td>
+          <td style="padding:12px;border-bottom:1px solid #ddd;text-align:right;font-weight:700;font-size:15px">₹${inst.toLocaleString('en-IN')}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    ${charges.length?`<div style="margin-top:16px;margin-bottom:6px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#888">Additional Charges</div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead><tr style="background:#f1f1f1">
+        <th style="padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#666">#</th>
+        <th style="padding:8px 12px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#666">Description</th>
+        <th style="padding:8px 12px;text-align:center;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#666">Qty</th>
+        <th style="padding:8px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#666">Rate</th>
+        <th style="padding:8px 12px;text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:#666">Amount</th>
+      </tr></thead>
+      <tbody>${chargeRows}</tbody>
+    </table>`:''}
+
+    <div style="display:flex;justify-content:flex-end;margin-top:20px">
+      <table style="min-width:280px;font-size:13px">
+        <tr><td style="padding:6px 16px;color:#666">Installation</td><td style="padding:6px 16px;text-align:right;font-weight:600">₹${inst.toLocaleString('en-IN')}</td></tr>
+        <tr><td style="padding:6px 16px;color:#666">Additional charges</td><td style="padding:6px 16px;text-align:right;font-weight:600">₹${chTotal.toLocaleString('en-IN')}</td></tr>
+        <tr style="font-size:18px;font-weight:900;border-top:2px solid #1a1a1a">
+          <td style="padding:12px 16px">GRAND TOTAL</td>
+          <td style="padding:12px 16px;text-align:right">₹${grand.toLocaleString('en-IN')}</td>
+        </tr>
+      </table>
+    </div>
+
+    ${g('notes')?`<div style="margin-top:24px;padding:12px 16px;background:#f8f9fa;border-radius:6px;border:1px solid #e5e7eb">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px">Notes / Terms</div>
+      <div style="font-size:12px;line-height:1.6;color:#444;white-space:pre-wrap">${g('notes')}</div>
+    </div>`:''}
+
+    <div style="margin-top:40px;display:flex;justify-content:space-between">
+      <div style="text-align:center;width:200px">
+        <div style="border-top:1px solid #999;padding-top:8px;font-size:11px;color:#888">Contractor Signature</div>
+      </div>
+      <div style="text-align:center;width:200px">
+        <div style="border-top:1px solid #999;padding-top:8px;font-size:11px;color:#888">Authorized Signature</div>
+      </div>
+    </div>
+
+    <div style="margin-top:30px;text-align:center;font-size:10px;color:#aaa">Generated on ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</div>
+  </div>`;
+}
+
+async function buildPDF(){
+  await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js');
+  await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+  const holder=document.createElement('div');
+  holder.style.cssText='position:fixed;left:-10000px;top:0;width:760px;background:#fff;z-index:-1';
+  holder.innerHTML=buildInvoiceHTML();
+  document.body.appendChild(holder);
+  await new Promise(r=>setTimeout(r,80));
+  const cv=await window.html2canvas(holder,{scale:3,backgroundColor:'#ffffff',useCORS:true});
+  document.body.removeChild(holder);
+  const {jsPDF}=window.jspdf;
+  const pdf=new jsPDF({unit:'pt',format:'a4',compress:true});
+  const pw=pdf.internal.pageSize.getWidth(),ph=pdf.internal.pageSize.getHeight();
+  let iw=pw,ih=cv.height*pw/cv.width;
+  if(ih>ph){const s=ph/ih;ih=ph;iw*=s;}
+  pdf.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',(pw-iw)/2,0,iw,ih,undefined,'FAST');
+  return pdf;
+}
+
+/* ---- build the FINAL pdf: invoice + the uploaded handover appended ---- */
+async function buildFinalPdf(){
+  const invPdf=await buildPDF();
+  const invBytes=invPdf.output('arraybuffer');
+  if(!hoFile) return {bytes:new Uint8Array(invBytes),merged:false};
+  try{
+    await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+    const {PDFDocument}=window.PDFLib;
+    const outDoc=await PDFDocument.load(invBytes);
+    const buf=await hoFile.arrayBuffer();
+    const isPdf=(hoFile.type==='application/pdf')||/\.pdf$/i.test(hoFile.name);
+    if(isPdf){
+      const hoDoc=await PDFDocument.load(buf);
+      const pages=await outDoc.copyPages(hoDoc,hoDoc.getPageIndices());
+      pages.forEach(p=>outDoc.addPage(p));
+    }else{
+      const isPng=(hoFile.type&&hoFile.type.includes('png'))||/\.png$/i.test(hoFile.name);
+      const img=isPng?await outDoc.embedPng(buf):await outDoc.embedJpg(buf);
+      const page=outDoc.addPage([595.28,841.89]); // A4 in points
+      const maxW=page.getWidth()-40,maxH=page.getHeight()-40;
+      const sc=Math.min(maxW/img.width,maxH/img.height);
+      const w=img.width*sc,h=img.height*sc;
+      page.drawImage(img,{x:(page.getWidth()-w)/2,y:(page.getHeight()-h)/2,width:w,height:h});
+    }
+    return {bytes:await outDoc.save(),merged:true};
+  }catch(e){
+    // if the handover can't be merged, still deliver the invoice on its own
+    return {bytes:new Uint8Array(invBytes),merged:false,error:e};
+  }
+}
+function cleanClient(s){
+  if(!s)return '';
+  // strip a leading salutation and any trailing address/phone noise
+  let t=s.replace(/^(M\/s|Mr|Mrs|Ms)\.?\s*/i,'').trim();
+  t=t.split(/\s{2,}|,|\|/)[0].trim();          // take the name part before big gaps/commas
+  return t.slice(0,60);
+}
+function syncQuotationMeta(){
+  const offEl=document.getElementById('offerNo');
+  const cusEl=document.getElementById('custName');
+  if(offEl&&importedOffers.length&&(!offEl.value||offEl.dataset.auto==='1')){offEl.value=combineOffers(importedOffers);offEl.dataset.auto='1';}
+  if(cusEl&&importedClient&&(!cusEl.value||cusEl.dataset.auto==='1')){cusEl.value=cleanClient(importedClient);cusEl.dataset.auto='1';}
+}
+// if user edits these manually, stop auto-overwriting
+['offerNo','custName'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',()=>{e.dataset.auto='0';});});
+function combineOffers(offers){
+  if(!offers.length)return '';
+  const groups={};
+  offers.forEach(o=>{const p=o.split('/');const base=p[0];const obl=p.slice(1).join('/');
+    if(!groups[base])groups[base]=[];groups[base].push(obl);});
+  return Object.entries(groups).map(([base,obls])=>base+'/'+obls.join('/')).join(', ');}
+
+function pdfName(){return 'Invoice_'+(document.getElementById('invNo').value||'draft').replace(/[^\w-]/g,'_')+(importedOffers.length?'_'+combineOffers(importedOffers).replace(/[^\w-]/g,'_'):'')+'.pdf';}
+async function downloadPDF(){
+  toast(hoFile?'Building PDF + handover…':'Building PDF…');
+  try{
+    const {bytes,merged}=await buildFinalPdf();
+    logToSheet();
+    const blob=new Blob([bytes],{type:'application/pdf'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=pdfName();
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    toast('✓ Invoice PDF saved'+(merged?' (with handover)':'')+(SHEET_WEBAPP_URL?' & logged':''));
+  }
+  catch(e){toast('⚠ '+((e&&e.message)||'PDF failed'));}
+}
+
+/* ---- export ALL of the logged-in contractor's submitted invoices (from the Sheet) ---- */
+async function exportExcel(){
+  if(!SHEET_WEBAPP_URL){toast('⚠ Not connected to the Sheet');return;}
+  toast('Fetching your invoices…');
+  try{
+    const r=await apiGet('action=invoices&contractor='+encodeURIComponent(curCode));
+    if(!r||!Array.isArray(r.invoices)){toast('⚠ Could not read invoices');return;}
+    if(!r.invoices.length){toast('No invoices recorded yet for '+((currentUser&&currentUser.name)||'you'));return;}
+    await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const XLSX=window.XLSX;
+    const headers=r.headers||['Timestamp','Contractor','Code','Invoice No','Date','Bill To','Offer No','Customer','Total Sqft','Rate','Installation','Additional','Grand Total','Notes'];
+    // tidy the timestamp column into a readable date-time
+    const rows=r.invoices.map(row=>{
+      const c=row.slice();
+      if(c[0]){const d=new Date(c[0]);if(!isNaN(d))c[0]=d.toLocaleString('en-IN');}
+      return c;
+    });
+    const aoa=[headers,...rows];
+    const ws=XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols']=headers.map((h,i)=>({wch:i===0?20:(String(h).length<8?11:16)}));
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Invoices');
+    const nm=(((currentUser&&currentUser.name)||curCode||'contractor')+'_invoices').replace(/[^\w-]/g,'_');
+    XLSX.writeFile(wb,nm+'.xlsx');
+    toast('✓ Exported '+rows.length+' invoice'+(rows.length>1?'s':''));
+  }catch(e){toast('⚠ '+((e&&e.message)||'Export failed'));}
+}
+
+/* ---- one-click email ---- */
+async function emailInvoice(){
+  toast(hoFile?'Building invoice + handover…':'Building invoice…');
+  try{
+    const {bytes}=await buildFinalPdf();const blob=new Blob([bytes],{type:'application/pdf'});
+    const file=new File([blob],pdfName(),{type:'application/pdf'});
+    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
+      await navigator.share({
+        title:'Invoice '+document.getElementById('invNo').value,
+        text:'Hi Vishal,\n\nPlease find attached the contractor invoice '+document.getElementById('invNo').value+' from '+(document.getElementById('cName').value||'contractor')+'.\n\nTotal: '+document.getElementById('grand').textContent+'\nSq.ft: '+document.getElementById('totalSqft').value+'\nRate: ₹'+(document.getElementById('rate').value||'TBD')+'/sqft'+'\n\nRegards',
+        files:[file]
+      });
+      logToSheet();
+    }else{
+      // fallback: mailto
+      const subj=encodeURIComponent('Contractor Invoice '+document.getElementById('invNo').value);
+      const body=encodeURIComponent('Hi Vishal,\n\nPlease find the contractor invoice '+document.getElementById('invNo').value+' from '+(document.getElementById('cName').value||'contractor')+'.\nTotal: '+document.getElementById('grand').textContent+'\nSq.ft: '+document.getElementById('totalSqft').value+'\nRate: ₹'+(document.getElementById('rate').value||'TBD')+'/sqft'+'\n\n(PDF downloaded separately)\n\nRegards');
+      window.open('mailto:vishal.saini@lingel.in?subject='+subj+'&body='+body);
+      downloadPDF();
+    }
+  }catch(e){if(e.name!=='AbortError')toast('⚠ '+(e.message||'Email failed'));}
+}
+</script>
+<script>
+/* register the service worker so the phone offers "Install" */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+</script>
+</body>
+</html>
