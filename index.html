@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
 <title>Lingel — Contractor Invoice</title>
+<meta name="theme-color" content="#13161b">
+<link rel="manifest" href="manifest.json">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Lingel Invoice">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADYUlEQVR4nO3csWobSxiA0fUlYOM2kCZ1IM0tkuq+f5UqKdIE8h7G7lIIjEkcX+Nvd0bePacyAkuj4dM/i0B78fbd+wVe6p/ZC+B1ExCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiebPR8377+fn+708fvr7gGS6vrtdbzh7c3d7MXsIjLrb4afPDek6e2ZBonul8Ylr/CPuznr89+NDl1bV6nu98tmvlCfR0KH/OoTPZhddu4kCaeRGtnrVM3MmtLqKfJp3VnbZ0/CiaMIHUs53xezs6IPVsbfAODw1IPWOM3GffRO/TsIYEtFtjGhLQng1oSEA7t3VDAtq/TRsSEImADmG7ISSgo9ioIQGRCIhEQAeyxSkmIBIBHcvqQ0hAJAIiERCJgA5n3csgAZEIiERAJAIiERDJnF+mruvL94+zl3Au/vv3x+BXNIFIBESyhyPs3vgBfnJ/hk5fwHgmEImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERLKreyROv9/v9AWMZwKRCIhkV0fY9LvsTl/AeCYQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiCSXd1kc/ptmqcvYDwTiERAJHs4wmbdnZnFBCISEImADufu9mbFZxMQiYBIBEQioGNZ9wJoERCRgA5k9fGzCIhIQCQCOootzq9FQAexUT2LgIgEtH/bjZ9FQLu3aT2LgPZt63oWAe3YgHoWAe3VmHqWwQENe1cHN3KfR08gDW1t8A5POMI0tJ3xezvnZz2n93l5dT3l1Xdp1sdy5kW0UbSWiTt58fbd+3Wf8dvPz48+/unD1yf+yzR6gXP4BK4/gR4N5el6lmW5u705h+14Lc5nu9afQCcP59D/1vMoM+k3Z1LMb7YKiIPwTTSJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+QXmOYlu5F5+IQAAAABJRU5ErkJggg==">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Archivo+Narrow:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#13161b;--panel:#1a1e25;--panel-2:#222732;--text:#e8e4d9;--muted:#7c8694;--line:#2a2f3a;--hivis:#e2f14d;--ok:#4ade80;--warn:#fbbf24;--danger:#ef4444;--r:12px;--rs:8px}
@@ -44,12 +51,52 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 .rcard{font-size:12px;color:var(--muted);line-height:1.7;padding:10px;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--rs);margin-top:10px}
 .rcard b{color:var(--text)}
+/* ---- login gate ---- */
+.gate{position:fixed;inset:0;background:var(--bg);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.gate-card{width:100%;max-width:380px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--hivis);border-radius:var(--r);padding:26px 24px}
+.gate-card .brand{font-family:Archivo;font-weight:900;font-size:22px;text-transform:uppercase;letter-spacing:.04em}
+.gate-card .sub{font-family:'Archivo Narrow';font-size:12px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin:4px 0 22px}
+.gate-card .fd{margin-bottom:14px}
+.gate-err{color:var(--danger);font-size:12px;min-height:16px;margin-bottom:6px}
+/* ---- top bar (logged-in) ---- */
+.topbar{display:flex;align-items:center;justify-content:space-between;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r);padding:9px 14px;margin-bottom:12px}
+.topbar .who{font-size:13px;color:var(--muted)}
+.topbar .who b{color:var(--hivis);font-family:Archivo;font-weight:700}
+.topbar .lo{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:var(--rs);padding:6px 12px;font-size:12px;cursor:pointer;font-family:'Archivo Narrow';text-transform:uppercase;letter-spacing:.04em}
+.pill{display:inline-block;font-size:10px;padding:2px 8px;border-radius:20px;font-family:'JetBrains Mono'}
+.pill.on{background:rgba(74,222,128,.12);color:var(--ok);border:1px solid rgba(74,222,128,.3)}
+.pill.off{background:rgba(124,134,148,.12);color:var(--muted);border:1px solid var(--line)}
 @media(max-width:600px){.gr,.g3,.g4{grid-template-columns:1fr}.s2{grid-column:span 1}.row,.arow{grid-template-columns:1fr 1fr;gap:6px}}
-@media print{.acts,.toast,.rcard{display:none!important}}
+@media print{.acts,.toast,.rcard,.topbar{display:none!important}}
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- ===== LOGIN GATE ===== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="brand">Lingel</div>
+    <div class="sub">Contractor Invoice · Login</div>
+    <div class="fd">
+      <div class="lbl">Contractor</div>
+      <select id="loginName"><option value="">— Select your name —</option></select>
+      <div id="rosterStatus" style="font-size:11px;color:var(--muted);margin-top:6px">Loading contractor list… <a href="#" onclick="fetchRoster();return false" style="color:var(--hivis);text-decoration:none">↻ Reload</a></div>
+    </div>
+    <div class="fd">
+      <div class="lbl">PIN</div>
+      <input type="password" id="loginPin" placeholder="4-digit PIN" inputmode="numeric" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="gate-err" id="loginErr"></div>
+    <button class="btn btn-p" style="width:100%" onclick="doLogin()">Log in</button>
+  </div>
+</div>
+
+<div class="wrap" id="app" style="display:none">
+
+<div class="topbar">
+  <div class="who">Logged in as <b id="whoName">—</b> <span class="pill off" id="netPill">Sheet: —</span></div>
+  <button class="lo" onclick="doLogout()">Log out</button>
+</div>
 
 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
   <div style="font-family:Archivo;font-weight:900;font-size:14px;color:#6b7280;text-transform:uppercase;letter-spacing:.1em">Contractor Invoice</div>
@@ -77,7 +124,11 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
       </select></div>
   </div>
   <div class="gr" style="margin-top:10px">
-    <div class="fd"><div class="lbl">Contractor name</div><input id="cName" placeholder="Full name" oninput="document.getElementById('cnameDisplay').textContent=this.value||'Contractor Name'"></div>
+    <div class="fd"><div class="lbl">Offer no. (from quotation)</div><input id="offerNo" placeholder="Auto-filled from quotation"></div>
+    <div class="fd"><div class="lbl">Customer name (from quotation)</div><input id="custName" placeholder="Auto-filled from quotation"></div>
+  </div>
+  <div class="gr" style="margin-top:10px">
+    <div class="fd"><div class="lbl">Contractor name</div><input id="cName" placeholder="Full name" readonly style="background:var(--panel-2);cursor:not-allowed" oninput="document.getElementById('cnameDisplay').textContent=this.value||'Contractor Name'"></div>
     <div class="fd"><div class="lbl">Contractor phone</div><input type="tel" id="cPhone" placeholder="+91 XXXXX XXXXX"></div>
     <div class="fd s2"><div class="lbl">Contractor address</div><input id="cAddr" placeholder="Full address"></div>
   </div>
@@ -148,11 +199,10 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
 <div class="acts">
   <button class="btn btn-p" onclick="downloadPDF()">⤓ Download PDF</button>
-  <button class="btn btn-s" onclick="shareInvoice()">↗ Share</button>
-  <button class="btn btn-s" onclick="uploadDrive()">☁ Drive</button>
+  <button class="btn btn-s" onclick="exportExcel()">⤓ My invoices (Excel)</button>
+  <button class="btn btn-s" onclick="emailInvoice()">📧 Email to Vishal</button>
   <button class="btn btn-s" onclick="window.print()">🖨 Print</button>
-  <button class="btn btn-s" id="undoBtn" onclick="doUndo()" style="margin-left:auto" disabled>↩ Undo</button>
-  <button class="btn btn-d" onclick="if(confirm('Reset?'))location.reload()">Reset</button>
+  <button class="btn btn-p" onclick="newInvoice()" style="margin-left:auto">＋ New invoice</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -160,13 +210,185 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
 <script>
 const LOGO="";
-/* ---- init ---- */
+
+/* ============================================================
+   CONFIG — edit these two things before sharing the file
+   ============================================================ */
+// 1) Paste your Google Apps Script Web-App URL here (see setup notes).
+//    Leave "" to run fully offline (invoices still work; nothing is logged).
+const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwC8ZPk7oaU2wNdHabrbWfc2DufOUvj10dyefQMUdQ8ivaWMYrcWrA59iudooV9yLym0Q/exec";
+
+// 2) OFFLINE FALLBACK list only. The LIVE list of who can log in now lives
+//    in the "Contractors" tab of your Google Sheet (columns: Name, Code, PIN,
+//    Phone, Address). Add / remove people there — no need to edit this file.
+//    This list is used only on a brand-new device before the Sheet is reached,
+//    or if the Sheet is unreachable.
+const CONTRACTORS = [
+  { name:"Ravi Kumar",   code:"RK", pin:"1234", phone:"", addr:"" },
+  { name:"Suresh Yadav", code:"SY", pin:"2345", phone:"", addr:"" },
+  { name:"Amit Sharma",  code:"AS", pin:"3456", phone:"", addr:"" },
+];
+/* ============================================================ */
+
 document.getElementById('invDate').valueAsDate=new Date();
-const seq=parseInt(localStorage.getItem('linv_seq')||'0',10)+1;
-const ym=new Date().getFullYear().toString().slice(2)+String(new Date().getMonth()+1).padStart(2,'0');
-document.getElementById('invNo').value='INV-'+ym+'-'+String(seq).padStart(3,'0');
-document.getElementById('invLabel').textContent='INV-'+ym+'-'+String(seq).padStart(3,'0');
+
+let currentUser=null, curCode='', curSeq=1;
+// live roster: cached copy from the Sheet if we have one, else the in-file fallback
+let ROSTER = (JSON.parse(localStorage.getItem('linv_roster')||'null')) || CONTRACTORS.slice();
+
+function makeInvNo(code,seq){return 'INV-'+code+'-'+String(seq).padStart(3,'0');}
+function setInvNo(str){document.getElementById('invNo').value=str;document.getElementById('invLabel').textContent=str;}
 document.getElementById('invNo').oninput=function(){document.getElementById('invLabel').textContent=this.value;};
+
+/* ---- JSONP helper (lets us read a value back from the Sheet cross-origin) ---- */
+function jsonp(url){return new Promise((res,rej)=>{
+  const cb='cb_'+Date.now()+Math.floor(Math.random()*1e5);
+  const s=document.createElement('script');
+  const to=setTimeout(()=>{cleanup();rej(new Error('timeout'));},15000);
+  function cleanup(){clearTimeout(to);delete window[cb];s.remove();}
+  window[cb]=d=>{cleanup();res(d);};
+  s.src=url+(url.includes('?')?'&':'?')+'callback='+cb;
+  s.onerror=()=>{cleanup();rej(new Error('network'));};
+  document.head.appendChild(s);
+});}
+
+/* ---- read from the Sheet: try a normal fetch first (best on mobile),
+        fall back to JSONP script-injection. Cache-busted every call. ---- */
+async function apiGet(params){
+  const url=SHEET_WEBAPP_URL+(SHEET_WEBAPP_URL.includes('?')?'&':'?')+params+'&t='+Date.now();
+  try{
+    const res=await fetch(url,{method:'GET',redirect:'follow',cache:'no-store'});
+    if(res.ok){const data=await res.json();if(data&&typeof data==='object')return data;}
+  }catch(e){/* fall through to JSONP */}
+  return await jsonp(url);
+}
+
+/* ---- next invoice number: the Sheet is the boss; local memory only offline ---- */
+async function nextSeq(code){
+  if(SHEET_WEBAPP_URL){
+    try{
+      const r=await apiGet('action=next&contractor='+encodeURIComponent(code));
+      if(r&&typeof r.next==='number'){
+        setNet(true);
+        // keep this device's offline counter in step with the Sheet
+        localStorage.setItem('linv_seq_'+code,String(r.next-1));
+        return r.next;
+      }
+    }catch(e){setNet(false);}
+  }
+  // no Sheet / offline: fall back to what this device remembers
+  return parseInt(localStorage.getItem('linv_seq_'+code)||'0',10)+1;
+}
+async function refreshInvoiceNumber(){
+  curSeq=await nextSeq(curCode);
+  setInvNo(makeInvNo(curCode,curSeq));
+}
+function setNet(ok){
+  const p=document.getElementById('netPill');if(!p)return;
+  if(!SHEET_WEBAPP_URL){p.className='pill off';p.textContent='Sheet: not set';return;}
+  p.className='pill '+(ok?'on':'off');p.textContent='Sheet: '+(ok?'connected':'offline');
+}
+
+/* ---- log a finished invoice to the Google Sheet (fire-and-forget) ---- */
+function logToSheet(){
+  if(!SHEET_WEBAPP_URL) return;
+  const sqft=parseFloat(g('totalSqft'))||0, rate=parseFloat(g('rate'))||0;
+  let ach=0;document.querySelectorAll('[data-cq]').forEach(el=>{const q=parseFloat(el.value)||0,r=parseFloat(el.closest('.arow').querySelector('[data-cr]').value)||0;ach+=q*r;});
+  const inst=sqft*rate;
+  const payload={
+    action:'log',
+    timestamp:new Date().toISOString(),
+    contractor:g('cName'), code:curCode,
+    invoiceNo:g('invNo'), date:g('invDate'),
+    billTo:(CO[g('billTo')]||{}).n||'',
+    offerNo:g('offerNo'), customer:g('custName'),
+    totalSqft:sqft, rate:rate,
+    installation:inst, additional:ach, grandTotal:inst+ach,
+    notes:g('notes')
+  };
+  // text/plain avoids a CORS pre-flight; no-cors = we don't need to read the reply
+  fetch(SHEET_WEBAPP_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)}).catch(()=>{});
+  localStorage.setItem('linv_seq_'+curCode,String(curSeq)); // keep local counter in step
+}
+
+/* ---- login (roster comes from the Sheet, cached for offline) ---- */
+function populateLoginNames(){
+  const sel=document.getElementById('loginName');
+  sel.innerHTML='<option value="">— Select your name —</option>';
+  ROSTER.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.name;sel.appendChild(o);});
+}
+function setRosterStatus(msg,color){const el=document.getElementById('rosterStatus');if(el)el.innerHTML=msg+' <a href="#" onclick="fetchRoster();return false" style="color:'+(color||'var(--hivis)')+';text-decoration:none">↻ Reload</a>';}
+async function fetchRoster(){
+  if(!SHEET_WEBAPP_URL){setRosterStatus('Not connected to a Sheet — using offline list.');return;}
+  setRosterStatus('Loading contractor list…');
+  for(let attempt=1;attempt<=2;attempt++){
+    try{
+      const r=await apiGet('action=contractors');
+      if(r&&Array.isArray(r.contractors)){
+        if(r.contractors.length){
+          ROSTER=r.contractors;
+          localStorage.setItem('linv_roster',JSON.stringify(ROSTER));
+          populateLoginNames();setNet(true);
+          setRosterStatus('✓ '+ROSTER.length+' contractor'+(ROSTER.length>1?'s':'')+' loaded','var(--ok)');
+        }else{
+          setNet(true);
+          setRosterStatus('No names found in the Contractors tab.','var(--danger)');
+        }
+        return;
+      }
+    }catch(e){/* try again */}
+  }
+  setNet(false);
+  setRosterStatus('Couldn’t load — check internet, then','var(--danger)');
+}
+function doLogin(){
+  const idx=document.getElementById('loginName').value;
+  const pin=document.getElementById('loginPin').value.trim();
+  const err=document.getElementById('loginErr');
+  if(idx===''){err.textContent='Please select your name.';return;}
+  const c=ROSTER[+idx];
+  if(!c){err.textContent='Please pick your name again.';return;}
+  if(pin!==String(c.pin)){err.textContent='Wrong PIN. Try again.';return;}
+  err.textContent='';
+  localStorage.setItem('linv_user',c.code);
+  applyUser(c);
+}
+function doLogout(){localStorage.removeItem('linv_user');location.reload();}
+async function applyUser(c){
+  currentUser=c;curCode=c.code;
+  document.getElementById('gate').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('whoName').textContent=c.name;
+  const nm=document.getElementById('cName');nm.value=c.name;document.getElementById('cnameDisplay').textContent=c.name;
+  if(c.phone&&!document.getElementById('cPhone').value)document.getElementById('cPhone').value=c.phone;
+  if(c.addr&&!document.getElementById('cAddr').value)document.getElementById('cAddr').value=c.addr;
+  setNet(false);
+  await refreshInvoiceNumber();
+}
+
+/* ---- start a fresh invoice (new number, cleared form) ---- */
+async function newInvoice(){
+  if(!confirm('Start a new invoice? This clears the current one.'))return;
+  ['totalSqft','rate','offerNo','custName','notes','cPhone','cAddr'].forEach(id=>{const e=document.getElementById(id);if(e&&!['cPhone','cAddr'].includes(id))e.value='';});
+  document.getElementById('charges').innerHTML='';
+  document.getElementById('qList').innerHTML='';document.getElementById('qSummary').innerHTML='';
+  qItems=[];importedOffers=[];importedClient='';
+  document.getElementById('offerNo').dataset.auto='';document.getElementById('custName').dataset.auto='';
+  document.getElementById('invDate').valueAsDate=new Date();
+  calc();
+  await refreshInvoiceNumber();
+  toast('New invoice: '+g('invNo'));
+}
+
+/* ---- boot: restore session or show login, then refresh roster from Sheet ---- */
+populateLoginNames();
+(function boot(){
+  const savedCode=localStorage.getItem('linv_user');
+  const c=savedCode?ROSTER.find(x=>x.code===savedCode):null;
+  if(c){applyUser(c);}
+  else{document.getElementById('gate').style.display='flex';}
+  fetchRoster(); // pull the latest names/PINs from the Sheet in the background
+})();
 
 const CO={lingel:{n:'Lingel Windows & Doors Technology Pvt. Ltd',a:'Kapriwas Sec-14, Kapriwas, Haryana 123110'},fensterbau:{n:'Fensterbau Lingel India Private Limited',a:'1st floor, 12A & 22, near Subhash chowk, Central Park II, Sector 48, Gurugram, Haryana 122018'}};
 const RATES={'Aluminium Windows & Doors':45,'UPVC Windows & Doors':25,'Skylight':55,'Glass House':60,'Georgian Bars':15,'Dismantling Old Windows':35,'Outstation (beyond 200km)':60};
@@ -232,7 +454,7 @@ document.getElementById('qPdf').addEventListener('change',async ev=>{
         }
       }
     }
-    renderQ();
+    renderQ();syncQuotationMeta();
     toast(total?'✓ '+total+' positions · '+qItems.reduce((s,q)=>s+q.sqft,0).toFixed(1)+' sq.ft':'⚠ No positions found');
   }catch(e){console.error(e);toast('⚠ '+(e.message||"Couldn't read PDF"));}
 });
@@ -322,6 +544,8 @@ function buildInvoiceHTML(){
         <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bill To</div>
         <div style="font-weight:700;font-size:14px">${billTo?billTo.n:'—'}</div>
         <div style="font-size:12px;color:#555;max-width:280px;line-height:1.5">${billTo?billTo.a:''}</div>
+        ${g('custName')?`<div style="font-size:12px;color:#555;margin-top:8px"><span style="color:#888">Customer:</span> <b>${g('custName')}</b></div>`:''}
+        ${g('offerNo')?`<div style="font-size:12px;color:#555"><span style="color:#888">Offer No.:</span> <b>${g('offerNo')}</b></div>`:''}
       </div>
       <div style="text-align:right">
         <div style="font-size:32px;font-weight:900;color:#1a1a1a;letter-spacing:1px">INVOICE</div>
@@ -412,6 +636,52 @@ async function buildPDF(){
   pdf.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',(pw-iw)/2,0,iw,ih,undefined,'FAST');
   return pdf;
 }
+
+/* ---- build the FINAL pdf: invoice + the uploaded handover appended ---- */
+async function buildFinalPdf(){
+  const invPdf=await buildPDF();
+  const invBytes=invPdf.output('arraybuffer');
+  if(!hoFile) return {bytes:new Uint8Array(invBytes),merged:false};
+  try{
+    await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js');
+    const {PDFDocument}=window.PDFLib;
+    const outDoc=await PDFDocument.load(invBytes);
+    const buf=await hoFile.arrayBuffer();
+    const isPdf=(hoFile.type==='application/pdf')||/\.pdf$/i.test(hoFile.name);
+    if(isPdf){
+      const hoDoc=await PDFDocument.load(buf);
+      const pages=await outDoc.copyPages(hoDoc,hoDoc.getPageIndices());
+      pages.forEach(p=>outDoc.addPage(p));
+    }else{
+      const isPng=(hoFile.type&&hoFile.type.includes('png'))||/\.png$/i.test(hoFile.name);
+      const img=isPng?await outDoc.embedPng(buf):await outDoc.embedJpg(buf);
+      const page=outDoc.addPage([595.28,841.89]); // A4 in points
+      const maxW=page.getWidth()-40,maxH=page.getHeight()-40;
+      const sc=Math.min(maxW/img.width,maxH/img.height);
+      const w=img.width*sc,h=img.height*sc;
+      page.drawImage(img,{x:(page.getWidth()-w)/2,y:(page.getHeight()-h)/2,width:w,height:h});
+    }
+    return {bytes:await outDoc.save(),merged:true};
+  }catch(e){
+    // if the handover can't be merged, still deliver the invoice on its own
+    return {bytes:new Uint8Array(invBytes),merged:false,error:e};
+  }
+}
+function cleanClient(s){
+  if(!s)return '';
+  // strip a leading salutation and any trailing address/phone noise
+  let t=s.replace(/^(M\/s|Mr|Mrs|Ms)\.?\s*/i,'').trim();
+  t=t.split(/\s{2,}|,|\|/)[0].trim();          // take the name part before big gaps/commas
+  return t.slice(0,60);
+}
+function syncQuotationMeta(){
+  const offEl=document.getElementById('offerNo');
+  const cusEl=document.getElementById('custName');
+  if(offEl&&importedOffers.length&&(!offEl.value||offEl.dataset.auto==='1')){offEl.value=combineOffers(importedOffers);offEl.dataset.auto='1';}
+  if(cusEl&&importedClient&&(!cusEl.value||cusEl.dataset.auto==='1')){cusEl.value=cleanClient(importedClient);cusEl.dataset.auto='1';}
+}
+// if user edits these manually, stop auto-overwriting
+['offerNo','custName'].forEach(id=>{const e=document.getElementById(id);if(e)e.addEventListener('input',()=>{e.dataset.auto='0';});});
 function combineOffers(offers){
   if(!offers.length)return '';
   const groups={};
@@ -421,110 +691,77 @@ function combineOffers(offers){
 
 function pdfName(){return 'Invoice_'+(document.getElementById('invNo').value||'draft').replace(/[^\w-]/g,'_')+(importedOffers.length?'_'+combineOffers(importedOffers).replace(/[^\w-]/g,'_'):'')+'.pdf';}
 async function downloadPDF(){
-  toast('Building PDF…');
-  try{const pdf=await buildPDF();localStorage.setItem('linv_seq',String(seq));pdf.save(pdfName());toast('✓ Invoice PDF saved');}
+  toast(hoFile?'Building PDF + handover…':'Building PDF…');
+  try{
+    const {bytes,merged}=await buildFinalPdf();
+    logToSheet();
+    const blob=new Blob([bytes],{type:'application/pdf'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=pdfName();
+    document.body.appendChild(a);a.click();a.remove();
+    setTimeout(()=>URL.revokeObjectURL(a.href),3000);
+    toast('✓ Invoice PDF saved'+(merged?' (with handover)':'')+(SHEET_WEBAPP_URL?' & logged':''));
+  }
   catch(e){toast('⚠ '+((e&&e.message)||'PDF failed'));}
 }
 
+/* ---- export ALL of the logged-in contractor's submitted invoices (from the Sheet) ---- */
+async function exportExcel(){
+  if(!SHEET_WEBAPP_URL){toast('⚠ Not connected to the Sheet');return;}
+  toast('Fetching your invoices…');
+  try{
+    const r=await apiGet('action=invoices&contractor='+encodeURIComponent(curCode));
+    if(!r||!Array.isArray(r.invoices)){toast('⚠ Could not read invoices');return;}
+    if(!r.invoices.length){toast('No invoices recorded yet for '+((currentUser&&currentUser.name)||'you'));return;}
+    await ensureScript('https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js');
+    const XLSX=window.XLSX;
+    const headers=r.headers||['Timestamp','Contractor','Code','Invoice No','Date','Bill To','Offer No','Customer','Total Sqft','Rate','Installation','Additional','Grand Total','Notes'];
+    // tidy the timestamp column into a readable date-time
+    const rows=r.invoices.map(row=>{
+      const c=row.slice();
+      if(c[0]){const d=new Date(c[0]);if(!isNaN(d))c[0]=d.toLocaleString('en-IN');}
+      return c;
+    });
+    const aoa=[headers,...rows];
+    const ws=XLSX.utils.aoa_to_sheet(aoa);
+    ws['!cols']=headers.map((h,i)=>({wch:i===0?20:(String(h).length<8?11:16)}));
+    const wb=XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb,ws,'Invoices');
+    const nm=(((currentUser&&currentUser.name)||curCode||'contractor')+'_invoices').replace(/[^\w-]/g,'_');
+    XLSX.writeFile(wb,nm+'.xlsx');
+    toast('✓ Exported '+rows.length+' invoice'+(rows.length>1?'s':''));
+  }catch(e){toast('⚠ '+((e&&e.message)||'Export failed'));}
+}
+
 /* ---- one-click email ---- */
-async function shareInvoice(){
-  toast('Building invoice…');
+async function emailInvoice(){
+  toast(hoFile?'Building invoice + handover…':'Building invoice…');
   try{
-    const pdf=await buildPDF();const blob=pdf.output('blob');
+    const {bytes}=await buildFinalPdf();const blob=new Blob([bytes],{type:'application/pdf'});
     const file=new File([blob],pdfName(),{type:'application/pdf'});
-    const inv=document.getElementById('invNo').value;
-    const contractor=document.getElementById('cName').value||'contractor';
-    const msg='Contractor invoice '+inv+' from '+contractor+'.\nOffer: '+(importedOffers.length?combineOffers(importedOffers):'—')+'\nTotal: '+document.getElementById('grand').textContent+' · '+document.getElementById('totalSqft').value+' sq.ft';
     if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({title:'Invoice '+inv,text:msg,files:[file]});
-      localStorage.setItem('linv_seq',String(seq));
+      await navigator.share({
+        title:'Invoice '+document.getElementById('invNo').value,
+        text:'Hi Vishal,\n\nPlease find attached the contractor invoice '+document.getElementById('invNo').value+' from '+(document.getElementById('cName').value||'contractor')+'.\n\nTotal: '+document.getElementById('grand').textContent+'\nSq.ft: '+document.getElementById('totalSqft').value+'\nRate: ₹'+(document.getElementById('rate').value||'TBD')+'/sqft'+'\n\nRegards',
+        files:[file]
+      });
+      logToSheet();
     }else{
-      const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=pdfName();a.click();URL.revokeObjectURL(url);
-      toast('Downloaded — share via email/WhatsApp');
+      // fallback: mailto
+      const subj=encodeURIComponent('Contractor Invoice '+document.getElementById('invNo').value);
+      const body=encodeURIComponent('Hi Vishal,\n\nPlease find the contractor invoice '+document.getElementById('invNo').value+' from '+(document.getElementById('cName').value||'contractor')+'.\nTotal: '+document.getElementById('grand').textContent+'\nSq.ft: '+document.getElementById('totalSqft').value+'\nRate: ₹'+(document.getElementById('rate').value||'TBD')+'/sqft'+'\n\n(PDF downloaded separately)\n\nRegards');
+      window.open('mailto:vishal.saini@lingel.in?subject='+subj+'&body='+body);
+      downloadPDF();
     }
-  }catch(e){if(e.name!=='AbortError')toast('⚠ '+(e.message||'Share failed'));}
+  }catch(e){if(e.name!=='AbortError')toast('⚠ '+(e.message||'Email failed'));}
 }
-
-/* ---- Drive upload (shared folder) ---- */
-let GDRIVE_CID='',GDRIVE_FID='';
-async function uploadDrive(){
-  GDRIVE_CID=localStorage.getItem('linv_gdrive_cid')||'';
-  GDRIVE_FID=localStorage.getItem('linv_gdrive_fid')||'';
-  if(!GDRIVE_CID){const id=prompt('One-time setup (1/2):\nPaste Google OAuth Client ID\n(ends in .apps.googleusercontent.com)');if(!id)return;GDRIVE_CID=id.trim();localStorage.setItem('linv_gdrive_cid',GDRIVE_CID);}
-  if(!GDRIVE_FID){const fid=prompt('One-time setup (2/2):\nPaste the shared Google Drive folder ID\n(from the folder URL after /folders/)');if(!fid)return;GDRIVE_FID=fid.trim();localStorage.setItem('linv_gdrive_fid',GDRIVE_FID);}
-  try{await ensureScript('https://accounts.google.com/gsi/client');}catch(e){toast('⚠ Needs internet');return;}
-  if(!window._dtc){window._dtc=google.accounts.oauth2.initTokenClient({client_id:GDRIVE_CID,scope:'https://www.googleapis.com/auth/drive.file',callback:async r=>{if(r&&r.access_token){window._dtk=r.access_token;await _driveUp();}else toast('⚠ Sign-in failed');}});}
-  if(window._dtk)await _driveUp();else window._dtc.requestAccessToken({prompt:''});
-}
-async function _driveUp(){
-  toast('☁ Uploading to Drive…');
-  try{
-    const pdf=await buildPDF();const blob=pdf.output('blob');
-    const contractor=(document.getElementById('cName').value||'contractor').replace(/[^\w-]+/g,'_');
-    // find/create contractor subfolder
-    const q=encodeURIComponent("mimeType='application/vnd.google-apps.folder' and trashed=false and name='"+contractor+"' and '"+GDRIVE_FID+"' in parents");
-    let fr=await fetch('https://www.googleapis.com/drive/v3/files?q='+q+'&fields=files(id)',{headers:{Authorization:'Bearer '+window._dtk}});
-    if(fr.status===401){window._dtk=null;toast('Session expired — tap Drive again');return;}
-    let fd=await fr.json();let folderId=(fd.files&&fd.files[0])?fd.files[0].id:null;
-    if(!folderId){const cr=await fetch('https://www.googleapis.com/drive/v3/files?fields=id',{method:'POST',headers:{Authorization:'Bearer '+window._dtk,'Content-Type':'application/json'},body:JSON.stringify({name:contractor,mimeType:'application/vnd.google-apps.folder',parents:[GDRIVE_FID]})});folderId=(await cr.json()).id;}
-    const meta={name:pdfName(),parents:[folderId]};const form=new FormData();form.append('metadata',new Blob([JSON.stringify(meta)],{type:'application/json'}));form.append('file',blob);
-    const up=await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',{method:'POST',headers:{Authorization:'Bearer '+window._dtk},body:form});
-    const res=await up.json();
-    if(res&&res.id){localStorage.setItem('linv_seq',String(seq));toast('✓ Saved to Drive › '+contractor);}else toast('⚠ Upload failed');
-  }catch(e){console.error(e);toast('⚠ Drive error — '+(e.message||'try again'));}
-}
-
-/* ---- Undo system (last 3 states) ---- */
-let undoStack=[],undoTimer=null,restoringState=false;
-function snapshot(){
-  if(restoringState)return;
-  const state={
-    fields:{},qItems:JSON.parse(JSON.stringify(qItems)),
-    offers:JSON.parse(JSON.stringify(importedOffers)),client:importedClient,
-    charges:[]
-  };
-  ['invNo','invDate','billTo','cName','cPhone','cAddr','totalSqft','rate','notes'].forEach(id=>{const el=document.getElementById(id);if(el)state.fields[id]=el.value;});
-  document.querySelectorAll('.arow').forEach(el=>{
-    state.charges.push({desc:el.querySelector('input')?.value||'',qty:el.querySelector('[data-cq]')?.value||'',rate:el.querySelector('[data-cr]')?.value||''});
+</script>
+<script>
+/* register the service worker so the phone offers "Install" */
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
   });
-  undoStack.push(state);
-  if(undoStack.length>4)undoStack.shift(); // keep last 3 + current
-  updateUndoBtn();
 }
-function snapDebounced(){clearTimeout(undoTimer);undoTimer=setTimeout(snapshot,600);}
-function updateUndoBtn(){const b=document.getElementById('undoBtn');if(b)b.disabled=undoStack.length<2;}
-function doUndo(){
-  if(undoStack.length<2){toast('Nothing to undo');return;}
-  undoStack.pop(); // discard current
-  const state=undoStack[undoStack.length-1];
-  restoringState=true;
-  // restore fields
-  Object.entries(state.fields).forEach(([id,v])=>{const el=document.getElementById(id);if(el)el.value=v;});
-  document.getElementById('cnameDisplay').textContent=state.fields.cName||'Contractor Name';
-  document.getElementById('invLabel').textContent=state.fields.invNo||'—';
-  // restore quotation items
-  qItems=JSON.parse(JSON.stringify(state.qItems));
-  importedOffers=JSON.parse(JSON.stringify(state.offers));importedClient=state.client;
-  renderQ();
-  // restore charges
-  document.getElementById('charges').innerHTML='';
-  state.charges.forEach(c=>{addCharge(c.desc,parseFloat(c.rate)||0);
-    const rows=document.querySelectorAll('.arow');const last=rows[rows.length-1];
-    if(last){last.querySelector('[data-cq]').value=c.qty;last.querySelector('[data-cr]').value=c.rate;}});
-  calc();
-  restoringState=false;
-  updateUndoBtn();
-  toast('↩ Undone');
-}
-// hook snapshots on all inputs
-document.addEventListener('input',e=>{if(e.target.closest('.wrap')&&!restoringState)snapDebounced();});
-document.addEventListener('change',e=>{if(e.target.closest('.wrap')&&!restoringState)snapDebounced();});
-// snapshot before major actions
-const _origApplyAll=applyAll;applyAll=function(){snapshot();_origApplyAll();};
-const _origAddCharge=addCharge;addCharge=function(n,r){if(!restoringState)snapshot();return _origAddCharge(n,r);};
-// initial snapshot
-setTimeout(snapshot,300);
-
 </script>
 </body>
 </html>
