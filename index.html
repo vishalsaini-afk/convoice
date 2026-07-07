@@ -4,13 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1">
 <title>Lingel — Contractor Invoice</title>
-<meta name="theme-color" content="#13161b">
-<link rel="manifest" href="manifest.json">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Lingel Invoice">
-<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAMAAAADACAIAAADdvvtQAAADYUlEQVR4nO3csWobSxiA0fUlYOM2kCZ1IM0tkuq+f5UqKdIE8h7G7lIIjEkcX+Nvd0bePacyAkuj4dM/i0B78fbd+wVe6p/ZC+B1ExCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiebPR8377+fn+708fvr7gGS6vrtdbzh7c3d7MXsIjLrb4afPDek6e2ZBonul8Ylr/CPuznr89+NDl1bV6nu98tmvlCfR0KH/OoTPZhddu4kCaeRGtnrVM3MmtLqKfJp3VnbZ0/CiaMIHUs53xezs6IPVsbfAODw1IPWOM3GffRO/TsIYEtFtjGhLQng1oSEA7t3VDAtq/TRsSEImADmG7ISSgo9ioIQGRCIhEQAeyxSkmIBIBHcvqQ0hAJAIiERCJgA5n3csgAZEIiERAJAIiERDJnF+mruvL94+zl3Au/vv3x+BXNIFIBESyhyPs3vgBfnJ/hk5fwHgmEImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERLKreyROv9/v9AWMZwKRCIhkV0fY9LvsTl/AeCYQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIiERCJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiCSXd1kc/ptmqcvYDwTiERAJHs4wmbdnZnFBCISEImADufu9mbFZxMQiYBIBEQioGNZ9wJoERCRgA5k9fGzCIhIQCQCOootzq9FQAexUT2LgIgEtH/bjZ9FQLu3aT2LgPZt63oWAe3YgHoWAe3VmHqWwQENe1cHN3KfR08gDW1t8A5POMI0tJ3xezvnZz2n93l5dT3l1Xdp1sdy5kW0UbSWiTt58fbd+3Wf8dvPz48+/unD1yf+yzR6gXP4BK4/gR4N5el6lmW5u705h+14Lc5nu9afQCcP59D/1vMoM+k3Z1LMb7YKiIPwTTSJgEgERCIgEgGRCIhEQCQCIhEQiYBIBEQiIBIBkQiIREAkAiIREImASAREIiASAZEIiERAJAIi+QXmOYlu5F5+IQAAAABJRU5ErkJggg==">
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;700;900&family=Archivo+Narrow:wght@400;700&family=JetBrains+Mono:wght@400;700&family=Spline+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
 :root{--bg:#13161b;--panel:#1a1e25;--panel-2:#222732;--text:#e8e4d9;--muted:#7c8694;--line:#2a2f3a;--hivis:#e2f14d;--ok:#4ade80;--warn:#fbbf24;--danger:#ef4444;--r:12px;--rs:8px}
@@ -753,14 +746,6 @@ async function emailInvoice(){
       downloadPDF();
     }
   }catch(e){if(e.name!=='AbortError')toast('⚠ '+(e.message||'Email failed'));}
-}
-</script>
-<script>
-/* register the service worker so the phone offers "Install" */
-if('serviceWorker' in navigator){
-  window.addEventListener('load',function(){
-    navigator.serviceWorker.register('sw.js').catch(function(){});
-  });
 }
 </script>
 </body>
