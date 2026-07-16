@@ -84,6 +84,39 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
   </div>
 </div>
 
+<!-- ===== ACCOUNT / PAN PROMPT (one time) ===== -->
+<div class="gate" id="bankGate" style="display:none">
+  <div class="gate-card">
+    <div class="brand">Payment details</div>
+    <div class="sub">Bank account &amp; PAN · one-time setup</div>
+    <div class="fd">
+      <div class="lbl">Account holder name</div>
+      <input id="bkHolder" placeholder="As per bank records">
+    </div>
+    <div class="fd">
+      <div class="lbl">Bank name</div>
+      <input id="bkBank" placeholder="e.g. HDFC Bank">
+    </div>
+    <div class="fd">
+      <div class="lbl">Account number</div>
+      <input id="bkAcct" placeholder="Account number" inputmode="numeric" autocomplete="off">
+    </div>
+    <div class="fd">
+      <div class="lbl">IFSC code</div>
+      <input id="bkIfsc" placeholder="e.g. HDFC0001234" style="text-transform:uppercase" autocomplete="off">
+    </div>
+    <div class="fd">
+      <div class="lbl">PAN</div>
+      <input id="bkPan" placeholder="ABCDE1234F" maxlength="10" style="text-transform:uppercase" autocomplete="off">
+    </div>
+    <div class="gate-err" id="bankErr"></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-p" style="flex:1" onclick="saveBank()">Save</button>
+      <button class="btn btn-s" onclick="skipBank()">Skip for now</button>
+    </div>
+  </div>
+</div>
+
 <div class="wrap" id="app" style="display:none">
 
 <div class="topbar">
@@ -193,7 +226,7 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 <div class="acts">
   <button class="btn btn-p" onclick="downloadPDF()">⤓ Download PDF</button>
   <button class="btn btn-s" onclick="exportExcel()">⤓ My invoices (Excel)</button>
-  <button class="btn btn-s" onclick="emailInvoice()">📧 Email to Vishal</button>
+  <button class="btn btn-s" onclick="openBank()">💳 Bank / PAN</button>
   <button class="btn btn-s" onclick="window.print()">🖨 Print</button>
   <button class="btn btn-p" onclick="newInvoice()" style="margin-left:auto">＋ New invoice</button>
 </div>
@@ -357,6 +390,45 @@ async function applyUser(c){
   if(c.addr&&!document.getElementById('cAddr').value)document.getElementById('cAddr').value=c.addr;
   setNet(false);
   await refreshInvoiceNumber();
+  maybePromptBank();
+}
+
+/* ---- one-time bank / PAN details (saved on this device, per contractor) ---- */
+function bankKey(){return 'linv_bank_'+curCode;}
+function askedKey(){return 'linv_bank_asked_'+curCode;}
+function getBank(){try{return JSON.parse(localStorage.getItem(bankKey())||'null');}catch(e){return null;}}
+function openBank(){
+  const b=getBank()||{};
+  document.getElementById('bkHolder').value=b.holder||(currentUser&&currentUser.name)||'';
+  document.getElementById('bkBank').value=b.bank||'';
+  document.getElementById('bkAcct').value=b.acct||'';
+  document.getElementById('bkIfsc').value=b.ifsc||'';
+  document.getElementById('bkPan').value=b.pan||'';
+  document.getElementById('bankErr').textContent='';
+  document.getElementById('bankGate').style.display='flex';
+}
+function saveBank(){
+  const pan=document.getElementById('bkPan').value.trim().toUpperCase();
+  const err=document.getElementById('bankErr');
+  if(pan&&!/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan)){err.textContent='PAN should look like ABCDE1234F.';return;}
+  const rec={
+    holder:document.getElementById('bkHolder').value.trim(),
+    bank:document.getElementById('bkBank').value.trim(),
+    acct:document.getElementById('bkAcct').value.trim(),
+    ifsc:document.getElementById('bkIfsc').value.trim().toUpperCase(),
+    pan:pan
+  };
+  localStorage.setItem(bankKey(),JSON.stringify(rec));
+  localStorage.setItem(askedKey(),'1');
+  document.getElementById('bankGate').style.display='none';
+  toast('✓ Payment details saved');
+}
+function skipBank(){
+  localStorage.setItem(askedKey(),'1');
+  document.getElementById('bankGate').style.display='none';
+}
+function maybePromptBank(){
+  if(!getBank() && !localStorage.getItem(askedKey())) openBank();
 }
 
 /* ---- start a fresh invoice (new number, cleared form) ---- */
@@ -383,7 +455,7 @@ populateLoginNames();
   fetchRoster(); // pull the latest names/PINs from the Sheet in the background
 })();
 
-const CO={lingel:{n:'Lingel Windows & Doors Technology Pvt. Ltd',a:'Kapriwas Sec-14, Kapriwas, Haryana 123110'},fensterbau:{n:'Fensterbau Lingel India Private Limited',a:'1st floor, 12A & 22, near Subhash chowk, Central Park II, Sector 48, Gurugram, Haryana 122018'}};
+const CO={lingel:{n:'Lingel Windows & Doors Technology Pvt. Ltd',a:'Kapriwas Sec-14, Kapriwas, Haryana 123110',g:'06AABCL1537B2Z3'},fensterbau:{n:'Fensterbau Lingel India Private Limited',a:'1st floor, 12A & 22, near Subhash chowk, Central Park II, Sector 48, Gurugram, Haryana 122018',g:'06AACCF0423D1ZI'}};
 const RATES={'Aluminium Windows & Doors':45,'UPVC Windows & Doors':25,'Skylight':55,'Glass House':60,'Georgian Bars':15,'Dismantling Old Windows':35,'Outstation (beyond 200km)':60};
 const SVC=Object.keys(RATES);
 
@@ -523,6 +595,8 @@ function buildInvoiceHTML(){
   });
   const grand=inst+chTotal;
   const billTo=CO[g('billTo')];
+  const bank=getBank()||{};
+  const hasBank=!!(bank.holder||bank.bank||bank.acct||bank.ifsc||bank.pan);
   const chargeRows=charges.map((c,i)=>`<tr><td style="padding:8px 12px;border-bottom:1px solid #eee">${i+1}</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${c.desc}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center">${c.qty}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right">₹${c.rate.toLocaleString('en-IN')}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600">₹${c.total.toLocaleString('en-IN')}</td></tr>`).join('');
 
   return `<div style="font-family:Arial,Helvetica,sans-serif;color:#1a1a1a;width:100%;padding:40px 45px;background:#fff">
@@ -537,6 +611,7 @@ function buildInvoiceHTML(){
         <div style="font-size:11px;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">Bill To</div>
         <div style="font-weight:700;font-size:14px">${billTo?billTo.n:'—'}</div>
         <div style="font-size:12px;color:#555;max-width:280px;line-height:1.5">${billTo?billTo.a:''}</div>
+        ${billTo&&billTo.g?`<div style="font-size:12px;color:#555;margin-top:4px"><span style="color:#888">GSTIN:</span> <b>${billTo.g}</b></div>`:''}
         ${g('custName')?`<div style="font-size:12px;color:#555;margin-top:8px"><span style="color:#888">Customer:</span> <b>${g('custName')}</b></div>`:''}
         ${g('offerNo')?`<div style="font-size:12px;color:#555"><span style="color:#888">Offer No.:</span> <b>${g('offerNo')}</b></div>`:''}
       </div>
@@ -593,7 +668,18 @@ function buildInvoiceHTML(){
       </table>
     </div>
 
-    ${g('notes')?`<div style="margin-top:24px;padding:12px 16px;background:#f8f9fa;border-radius:6px;border:1px solid #e5e7eb">
+    ${hasBank?`<div style="margin-top:24px;padding:12px 16px;background:#f8f9fa;border-radius:6px;border:1px solid #e5e7eb">
+      <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:8px">Payment Details</div>
+      <table style="font-size:12px;color:#444;line-height:1.8;border-collapse:collapse">
+        ${bank.holder?`<tr><td style="color:#888;padding-right:20px;vertical-align:top">Account Holder</td><td style="font-weight:600">${bank.holder}</td></tr>`:''}
+        ${bank.bank?`<tr><td style="color:#888;padding-right:20px;vertical-align:top">Bank</td><td style="font-weight:600">${bank.bank}</td></tr>`:''}
+        ${bank.acct?`<tr><td style="color:#888;padding-right:20px;vertical-align:top">A/C No.</td><td style="font-weight:600">${bank.acct}</td></tr>`:''}
+        ${bank.ifsc?`<tr><td style="color:#888;padding-right:20px;vertical-align:top">IFSC</td><td style="font-weight:600">${bank.ifsc}</td></tr>`:''}
+        ${bank.pan?`<tr><td style="color:#888;padding-right:20px;vertical-align:top">PAN</td><td style="font-weight:600">${bank.pan}</td></tr>`:''}
+      </table>
+    </div>`:''}
+
+    ${g('notes')?`<div style="margin-top:16px;padding:12px 16px;background:#f8f9fa;border-radius:6px;border:1px solid #e5e7eb">
       <div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:#888;margin-bottom:6px">Notes / Terms</div>
       <div style="font-size:12px;line-height:1.6;color:#444;white-space:pre-wrap">${g('notes')}</div>
     </div>`:''}
@@ -723,29 +809,6 @@ async function exportExcel(){
     XLSX.writeFile(wb,nm+'.xlsx');
     toast('✓ Exported '+rows.length+' invoice'+(rows.length>1?'s':''));
   }catch(e){toast('⚠ '+((e&&e.message)||'Export failed'));}
-}
-
-/* ---- one-click email ---- */
-async function emailInvoice(){
-  toast(hoFile?'Building invoice + handover…':'Building invoice…');
-  try{
-    const {bytes}=await buildFinalPdf();const blob=new Blob([bytes],{type:'application/pdf'});
-    const file=new File([blob],pdfName(),{type:'application/pdf'});
-    if(navigator.share&&navigator.canShare&&navigator.canShare({files:[file]})){
-      await navigator.share({
-        title:'Invoice '+document.getElementById('invNo').value,
-        text:'Hi Vishal,\n\nPlease find attached the contractor invoice '+document.getElementById('invNo').value+' from '+(document.getElementById('cName').value||'contractor')+'.\n\nTotal: '+document.getElementById('grand').textContent+'\nSq.ft: '+document.getElementById('totalSqft').value+'\nRate: ₹'+(document.getElementById('rate').value||'TBD')+'/sqft'+'\n\nRegards',
-        files:[file]
-      });
-      logToSheet();
-    }else{
-      // fallback: mailto
-      const subj=encodeURIComponent('Contractor Invoice '+document.getElementById('invNo').value);
-      const body=encodeURIComponent('Hi Vishal,\n\nPlease find the contractor invoice '+document.getElementById('invNo').value+' from '+(document.getElementById('cName').value||'contractor')+'.\nTotal: '+document.getElementById('grand').textContent+'\nSq.ft: '+document.getElementById('totalSqft').value+'\nRate: ₹'+(document.getElementById('rate').value||'TBD')+'/sqft'+'\n\n(PDF downloaded separately)\n\nRegards');
-      window.open('mailto:vishal.saini@lingel.in?subject='+subj+'&body='+body);
-      downloadPDF();
-    }
-  }catch(e){if(e.name!=='AbortError')toast('⚠ '+(e.message||'Email failed'));}
 }
 </script>
 </body>
