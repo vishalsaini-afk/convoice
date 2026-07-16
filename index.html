@@ -71,9 +71,9 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
     <div class="brand">Lingel</div>
     <div class="sub">Contractor Invoice · Login</div>
     <div class="fd">
-      <div class="lbl">Contractor</div>
-      <select id="loginName"><option value="">— Select your name —</option></select>
-      <div id="rosterStatus" style="font-size:11px;color:var(--muted);margin-top:6px">Loading contractor list… <a href="#" onclick="fetchRoster();return false" style="color:var(--hivis);text-decoration:none">↻ Reload</a></div>
+      <div class="lbl">Username</div>
+      <input id="loginName" placeholder="Your name or code" autocomplete="username" autocapitalize="none" onkeydown="if(event.key==='Enter')document.getElementById('loginPin').focus()">
+      <div id="rosterStatus" style="font-size:11px;color:var(--muted);margin-top:6px">Connecting… <a href="#" onclick="fetchRoster();return false" style="color:var(--hivis);text-decoration:none">↻ Retry</a></div>
     </div>
     <div class="fd">
       <div class="lbl">PIN</div>
@@ -337,16 +337,11 @@ function logToSheet(){
   localStorage.setItem('linv_seq_'+curCode,String(curSeq)); // keep local counter in step
 }
 
-/* ---- login (roster comes from the Sheet, cached for offline) ---- */
-function populateLoginNames(){
-  const sel=document.getElementById('loginName');
-  sel.innerHTML='<option value="">— Select your name —</option>';
-  ROSTER.forEach((c,i)=>{const o=document.createElement('option');o.value=i;o.textContent=c.name;sel.appendChild(o);});
-}
-function setRosterStatus(msg,color){const el=document.getElementById('rosterStatus');if(el)el.innerHTML=msg+' <a href="#" onclick="fetchRoster();return false" style="color:'+(color||'var(--hivis)')+';text-decoration:none">↻ Reload</a>';}
+/* ---- login (roster comes from the Sheet, cached for offline; never shown) ---- */
+function setRosterStatus(msg,color){const el=document.getElementById('rosterStatus');if(el)el.innerHTML=msg+' <a href="#" onclick="fetchRoster();return false" style="color:'+(color||'var(--hivis)')+';text-decoration:none">↻ Retry</a>';}
 async function fetchRoster(){
-  if(!SHEET_WEBAPP_URL){setRosterStatus('Not connected to a Sheet — using offline list.');return;}
-  setRosterStatus('Loading contractor list…');
+  if(!SHEET_WEBAPP_URL){setRosterStatus('Offline mode.');return;}
+  setRosterStatus('Connecting…');
   for(let attempt=1;attempt<=2;attempt++){
     try{
       const r=await apiGet('action=contractors');
@@ -354,27 +349,31 @@ async function fetchRoster(){
         if(r.contractors.length){
           ROSTER=r.contractors;
           localStorage.setItem('linv_roster',JSON.stringify(ROSTER));
-          populateLoginNames();setNet(true);
-          setRosterStatus('✓ '+ROSTER.length+' contractor'+(ROSTER.length>1?'s':'')+' loaded','var(--ok)');
+          setNet(true);
+          setRosterStatus('✓ Ready','var(--ok)');
         }else{
           setNet(true);
-          setRosterStatus('No names found in the Contractors tab.','var(--danger)');
+          setRosterStatus('Ready (offline list).','var(--warn)');
         }
         return;
       }
     }catch(e){/* try again */}
   }
   setNet(false);
-  setRosterStatus('Couldn’t load — check internet, then','var(--danger)');
+  setRosterStatus('Couldn’t connect — check internet, then','var(--danger)');
 }
 function doLogin(){
-  const idx=document.getElementById('loginName').value;
+  const typed=document.getElementById('loginName').value;
   const pin=document.getElementById('loginPin').value.trim();
   const err=document.getElementById('loginErr');
-  if(idx===''){err.textContent='Please select your name.';return;}
-  const c=ROSTER[+idx];
-  if(!c){err.textContent='Please pick your name again.';return;}
-  if(pin!==String(c.pin)){err.textContent='Wrong PIN. Try again.';return;}
+  if(!typed.trim()){err.textContent='Enter your username.';return;}
+  const q=typed.trim().toLowerCase().replace(/\s+/g,' ');
+  const c=ROSTER.find(x=>
+    String(x.code||'').trim().toLowerCase()===q ||
+    String(x.name||'').trim().toLowerCase().replace(/\s+/g,' ')===q
+  );
+  // one generic message so the form never reveals whether a username exists
+  if(!c||pin!==String(c.pin)){err.textContent='Wrong username or PIN.';return;}
   err.textContent='';
   localStorage.setItem('linv_user',c.code);
   applyUser(c);
@@ -446,7 +445,6 @@ async function newInvoice(){
 }
 
 /* ---- boot: restore session or show login, then refresh roster from Sheet ---- */
-populateLoginNames();
 (function boot(){
   const savedCode=localStorage.getItem('linv_user');
   const c=savedCode?ROSTER.find(x=>x.code===savedCode):null;
