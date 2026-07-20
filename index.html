@@ -175,6 +175,15 @@ input::placeholder,textarea::placeholder{color:var(--muted)}
 
 <div class="sec">
   <div class="slbl">Installation</div>
+  <div class="fd" style="margin-bottom:10px">
+    <div class="lbl">Work type</div>
+    <select id="workType">
+      <option value="Regular Installation">Regular Installation</option>
+      <option value="Pending Items">Pending Items</option>
+      <option value="Rework">Rework</option>
+      <option value="Service">Service</option>
+    </select>
+  </div>
   <div class="gr g3">
     <div class="fd"><div class="lbl">Total sq.ft (from quotation)</div><input type="number" id="totalSqft" step="0.01" placeholder="Auto-calculated" oninput="calc()"></div>
     <div class="fd"><div class="lbl">Rate ₹ / sq.ft</div><input type="number" id="rate" step="0.01" placeholder="Fill after installation" oninput="calc()"></div>
@@ -327,6 +336,7 @@ function logToSheet(){
     contractor:g('cName'), code:curCode,
     invoiceNo:g('invNo'), date:g('invDate'),
     billTo:(CO[g('billTo')]||{}).n||'',
+    workType:g('workType'),
     offerNo:g('offerNo'), customer:g('custName'),
     totalSqft:sqft, rate:rate,
     installation:inst, additional:ach, grandTotal:inst+ach,
@@ -438,6 +448,7 @@ async function newInvoice(){
   document.getElementById('qList').innerHTML='';document.getElementById('qSummary').innerHTML='';
   qItems=[];importedOffers=[];importedClient='';
   document.getElementById('offerNo').dataset.auto='';document.getElementById('custName').dataset.auto='';
+  document.getElementById('workType').value='Regular Installation';
   document.getElementById('invDate').valueAsDate=new Date();
   calc();
   await refreshInvoiceNumber();
@@ -593,6 +604,8 @@ function buildInvoiceHTML(){
   });
   const grand=inst+chTotal;
   const billTo=CO[g('billTo')];
+  const wt=g('workType');
+  const lineDesc=(wt&&wt!=='Regular Installation')?(wt+' — Window & Door Installation'):'Window & Door Installation';
   const bank=getBank()||{};
   const hasBank=!!(bank.holder||bank.bank||bank.acct||bank.ifsc||bank.pan);
   const chargeRows=charges.map((c,i)=>`<tr><td style="padding:8px 12px;border-bottom:1px solid #eee">${i+1}</td><td style="padding:8px 12px;border-bottom:1px solid #eee">${c.desc}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:center">${c.qty}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right">₹${c.rate.toLocaleString('en-IN')}</td><td style="padding:8px 12px;border-bottom:1px solid #eee;text-align:right;font-weight:600">₹${c.total.toLocaleString('en-IN')}</td></tr>`).join('');
@@ -618,6 +631,7 @@ function buildInvoiceHTML(){
         <table style="margin-left:auto;font-size:12px;margin-top:8px">
           <tr><td style="color:#888;text-align:right;padding:2px 10px">Invoice No.</td><td style="font-weight:700">${g('invNo')}</td></tr>
           <tr><td style="color:#888;text-align:right;padding:2px 10px">Date</td><td style="font-weight:700">${g('invDate')}</td></tr>
+          ${g('workType')?`<tr><td style="color:#888;text-align:right;padding:2px 10px">Type</td><td style="font-weight:700">${g('workType')}</td></tr>`:''}
         </table>
       </div>
     </div>
@@ -635,7 +649,7 @@ function buildInvoiceHTML(){
       <tbody>
         <tr style="background:#f8f9fa">
           <td style="padding:12px;border-bottom:1px solid #ddd">1</td>
-          <td style="padding:12px;border-bottom:1px solid #ddd;font-weight:600">Window & Door Installation</td>
+          <td style="padding:12px;border-bottom:1px solid #ddd;font-weight:600">${lineDesc}</td>
           <td style="padding:12px;border-bottom:1px solid #ddd;text-align:center;font-weight:700">${sqft.toFixed(2)}</td>
           <td style="padding:12px;border-bottom:1px solid #ddd;text-align:right">₹${rate.toLocaleString('en-IN')}/sqft</td>
           <td style="padding:12px;border-bottom:1px solid #ddd;text-align:right;font-weight:700;font-size:15px">₹${inst.toLocaleString('en-IN')}</td>
