@@ -793,8 +793,9 @@ async function uploadToDrive(bytes,name){
   if(!SHEET_WEBAPP_URL) return null;
   const res=await fetch(SHEET_WEBAPP_URL,{method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},   /* simple request → reply is readable */
-    body:JSON.stringify({action:'upload',name:name,mime:'application/pdf',
-      offer:(document.getElementById('offerNo')||{}).value||'',base64:bytesToB64(bytes)})});
+    body:JSON.stringify({action:'upload',
+      folder:(document.getElementById('offerNo')||{}).value||'',   /* base offer → same per-order folder as the other apps */
+      name:name,mime:'application/pdf',data:bytesToB64(bytes)})});
   return await res.json();
 }
 async function downloadPDF(){
