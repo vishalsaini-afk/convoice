@@ -503,15 +503,21 @@ async function ensurePdfjs(){
   for(const [lib,wk] of cdns){try{await ensureScript(lib);if(window.pdfjsLib){window.pdfjsLib.GlobalWorkerOptions.workerSrc=wk;return;}}catch(e){}}
   throw new Error('PDF reader needs internet');}
 
-const RE_HDR=/^(\d{1,3}-.+?)\s+((?:[A-Za-z]\d?=[\d.,]+;){2,})\s+(\d+)/;
+// ---- Quotation parser (agreed rule): every entry under the Position column is its own position.
+// A position STARTS at each left-column label and runs until the NEXT label; dimensions are read
+// from that whole block. Labels = number-dash (10-SLD1-FF-Front, 66-W31-4F) OR Add-/ADD- (case-insensitive).
+const RE_LBL=/^(?:\d{1,3}-|Add-|ADD-)/i;                 // does this line start a new position?
+const RE_MEAS=/([A-Za-z]\d?)=([\d.,]+)/g;                // measure tokens (B=..;H=..; or L=..;A=..;)
+function qLabel(line){const mi=line.search(/\s+[A-Za-z]\d?=[\d.,]+;/);return (mi>=0?line.slice(0,mi):line).trim();}
 document.getElementById('qPdf').addEventListener('change',async ev=>{
   const files=[...ev.target.files];if(!files.length)return;ev.target.value='';
   toast('📄 Reading '+files.length+' PDF'+(files.length>1?'s':'')+'…');
   try{
-    await ensurePdfjs();let total=0;
+    await ensurePdfjs();let total=0;const seen={};
     for(const f of files){
       const buf=await f.arrayBuffer();
       const pdf=await window.pdfjsLib.getDocument({data:new Uint8Array(buf)}).promise;
+      const allLines=[];
       for(let pn=1;pn<=pdf.numPages;pn++){
         const page=await pdf.getPage(pn);const tc=await page.getTextContent();
         const _sp=[];tc.items.forEach(it=>{if(!it.str)return;_sp.push({x:it.transform[4],y:it.transform[5],str:it.str});});
@@ -524,13 +530,26 @@ document.getElementById('qPdf').addEventListener('change',async ev=>{
           if(nr&&!importedOffers.includes(nr[1])&&!/Tel|Fax|Phone|98|97|91/i.test(ln))importedOffers.push(nr[1]);
           const cl=ln.match(/(Mr|Mrs|Ms|M\/s)\.?\s+\S.*/i);
           if(cl&&!importedClient&&!/Sales|Manager|Sr\.|Vetrivel/i.test(ln))importedClient=ln.trim();
-          const m=RE_HDR.exec(ln);if(!m)continue;
-          const tk={};m[2].replace(/([A-Za-z]\d?)=([\d.,]+)/g,(_,a,b)=>{tk[a]=normNum(b);});
-          let W=null,H=null;
-          if(tk.B!=null&&tk.H!=null){W=tk.B;H=tk.H;}else if(tk.L!=null&&tk.A!=null){W=tk.L;H=tk.A;}
-          const sqft=(W&&H)?mmToSqft(W,H):0;
-          qItems.push({id:Date.now()+total,ref:m[1],sqft,w:W||0,h:H||0});total++;
+          allLines.push(ln);
         }
+      }
+      // split accumulated lines into position blocks at every label (incl. Add-/ADD- rows)
+      let cur=null;const blocks=[];
+      for(const ln of allLines){
+        if(RE_LBL.test(ln)){cur={label:qLabel(ln),text:ln};blocks.push(cur);}
+        else if(cur){cur.text+=' '+ln;}                 // dimensions/spec belong to the open position
+      }
+      for(const b of blocks){
+        const tk={};let mm;RE_MEAS.lastIndex=0;
+        while((mm=RE_MEAS.exec(b.text))){if(tk[mm[1]]==null)tk[mm[1]]=normNum(mm[2]);} // first value per key wins
+        let W=null,H=null;
+        if(tk.B!=null&&tk.H!=null){W=tk.B;H=tk.H;}       // fixed: B/H
+        else if(tk.L!=null&&tk.A!=null){W=tk.L;H=tk.A;}  // slider: L/A -> W/H
+        if(W==null||H==null)continue;                    // guard: skip pure charge lines (no dimensions)
+        let ref=b.label||('Position '+(total+1));        // guard: dedupe duplicate labels -> "(2)"
+        if(seen[ref]==null)seen[ref]=1;else{seen[ref]++;ref=ref+' ('+seen[ref]+')';}
+        const sqft=mmToSqft(W,H);
+        qItems.push({id:Date.now()+total,ref,sqft,w:W||0,h:H||0});total++;
       }
     }
     renderQ();syncQuotationMeta();
