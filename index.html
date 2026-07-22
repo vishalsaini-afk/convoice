@@ -796,13 +796,21 @@ function bytesToB64(bytes){
 }
 function uploadUrl(){ return UPLOAD_WEBAPP_URL || SHEET_WEBAPP_URL; }
 async function uploadToDrive(bytes,name){
-  const url=uploadUrl(); if(!url) return null;
-  const res=await fetch(url,{method:'POST',redirect:'follow',
-    headers:{'Content-Type':'text/plain;charset=utf-8'},   /* simple request → reply is readable */
-    body:JSON.stringify({action:'upload',
-      folder:(document.getElementById('offerNo')||{}).value||'',   /* base offer → same per-order folder as the other apps */
-      name:name,mime:'application/pdf',data:bytesToB64(bytes)})});
-  return await res.json();
+  const url=uploadUrl(); if(!url) return {ok:false,error:'no URL set'};
+  let res;
+  try{
+    res=await fetch(url,{method:'POST',redirect:'follow',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},   /* simple request → reply is readable */
+      body:JSON.stringify({action:'upload',
+        folder:(document.getElementById('offerNo')||{}).value||'',
+        name:name,mime:'application/pdf',data:bytesToB64(bytes)})});
+  }catch(e){ return {ok:false,error:'network/CORS: '+((e&&e.message)||e)}; }
+  const txt=await res.text();
+  let j=null; try{ j=JSON.parse(txt); }catch(_){}
+  if(!j){ // reply wasn't JSON — almost always a Google login page (access not "Anyone")
+    return {ok:false,error:'not JSON ('+res.status+') — set web app access to "Anyone" & redeploy',raw:(txt||'').slice(0,140)};
+  }
+  return j;
 }
 async function downloadPDF(){
   toast(hoFile?'Building PDF + handover…':'Building PDF…');
@@ -819,8 +827,9 @@ async function downloadPDF(){
     if(uploadUrl()){
       try{
         const up=await uploadToDrive(bytes,name);
-        toast(up&&up.ok ? '☁ Uploaded to Drive' : '⚠ Drive upload failed — PDF saved on phone');
-      }catch(e){ toast('⚠ Drive upload failed — PDF saved on phone'); }
+        if(up&&up.ok){ toast('☁ Uploaded to Drive'); }
+        else{ console.error('Drive upload reply:',up); toast('⚠ Drive: '+((up&&up.error)||'failed')); }
+      }catch(e){ console.error(e); toast('⚠ Drive: '+((e&&e.message)||'failed')); }
     }
   }
   catch(e){toast('⚠ '+((e&&e.message)||'PDF failed'));}
