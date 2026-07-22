@@ -253,6 +253,11 @@ const LOGO="";
 //    Leave "" to run fully offline (invoices still work; nothing is logged).
 const SHEET_WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwC8ZPk7oaU2wNdHabrbWfc2DufOUvj10dyefQMUdQ8ivaWMYrcWrA59iudooV9yLym0Q/exec";
 
+// 1b) If you deployed the separate Drive-upload script, paste its /exec URL here.
+//     Leave "" to send uploads to SHEET_WEBAPP_URL above (i.e. if you added the
+//     upload action to your existing invoice script instead).
+const UPLOAD_WEBAPP_URL = "";
+
 // 2) OFFLINE FALLBACK list only. The LIVE list of who can log in now lives
 //    in the "Contractors" tab of your Google Sheet (columns: Name, Code, PIN,
 //    Phone, Address). Add / remove people there — no need to edit this file.
@@ -789,9 +794,10 @@ function bytesToB64(bytes){
   for(let i=0;i<u8.length;i+=CH)bin+=String.fromCharCode.apply(null,u8.subarray(i,i+CH));
   return btoa(bin);
 }
+function uploadUrl(){ return UPLOAD_WEBAPP_URL || SHEET_WEBAPP_URL; }
 async function uploadToDrive(bytes,name){
-  if(!SHEET_WEBAPP_URL) return null;
-  const res=await fetch(SHEET_WEBAPP_URL,{method:'POST',redirect:'follow',
+  const url=uploadUrl(); if(!url) return null;
+  const res=await fetch(url,{method:'POST',redirect:'follow',
     headers:{'Content-Type':'text/plain;charset=utf-8'},   /* simple request → reply is readable */
     body:JSON.stringify({action:'upload',
       folder:(document.getElementById('offerNo')||{}).value||'',   /* base offer → same per-order folder as the other apps */
@@ -810,7 +816,7 @@ async function downloadPDF(){
     setTimeout(()=>URL.revokeObjectURL(a.href),3000);
     toast('✓ Invoice PDF saved'+(merged?' (with handover)':'')+(SHEET_WEBAPP_URL?' & logged':''));
     // same PDF also goes to the Drive folder, via the Apps Script
-    if(SHEET_WEBAPP_URL){
+    if(uploadUrl()){
       try{
         const up=await uploadToDrive(bytes,name);
         toast(up&&up.ok ? '☁ Uploaded to Drive' : '⚠ Drive upload failed — PDF saved on phone');
