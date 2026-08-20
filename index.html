@@ -333,7 +333,14 @@ function setNet(ok){
 function logToSheet(){
   if(!SHEET_WEBAPP_URL) return;
   const sqft=parseFloat(g('totalSqft'))||0, rate=parseFloat(g('rate'))||0;
-  let ach=0;document.querySelectorAll('[data-cq]').forEach(el=>{const q=parseFloat(el.value)||0,r=parseFloat(el.closest('.arow').querySelector('[data-cr]').value)||0;ach+=q*r;});
+  let ach=0;const charges=[];
+  document.querySelectorAll('.arow').forEach(row=>{
+    const desc=row.querySelector('input')?.value||'';
+    const q=parseFloat(row.querySelector('[data-cq]')?.value)||0;
+    const r=parseFloat(row.querySelector('[data-cr]')?.value)||0;
+    const t=q*r; ach+=t;
+    if(desc) charges.push({desc,qty:q,rate:r,total:t});
+  });
   const inst=sqft*rate;
   const payload={
     action:'log',
@@ -344,7 +351,7 @@ function logToSheet(){
     workType:g('workType'),
     offerNo:g('offerNo'), customer:g('custName'),
     totalSqft:sqft, rate:rate,
-    installation:inst, additional:ach, grandTotal:inst+ach,
+    installation:inst, additional:ach, grandTotal:inst+ach, charges:charges,
     notes:g('notes')
   };
   // text/plain avoids a CORS pre-flight; no-cors = we don't need to read the reply
